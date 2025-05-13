@@ -7,7 +7,8 @@ const AddFriend = () => {
   return (
     <div className="pt-[1rem] flex justify-end pb-[0.3rem] pr-[0.3rem]">
       <button
-        className="flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-500"
+        className="flex items-center gap-2 px-4 py-2 bg-[#39625C] text-white rounded hover:bg-[#83A99B] transition duration-300"
+        type="button"
         onClick={() => navigate("/add-friend")}
       >
         <UserPlus size={20} />

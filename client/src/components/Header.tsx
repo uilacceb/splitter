@@ -1,10 +1,10 @@
-import React from "react";
+
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const navigate = useNavigate();
   return (
-    <div className="flex justify-evenly items-center bg-gray-800 text-white p-4">
+    <div className="flex justify-evenly items-center bg-[#39625C] text-white p-6">
       <p className="cursor-pointer" onClick={() => navigate("/friends")}>
         Friends
       </p>
