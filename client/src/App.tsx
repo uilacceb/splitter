@@ -4,13 +4,22 @@ import CreateEventPage from "./pages/CreateEventPage";
 import AddParticipantsPage from "./pages/AddParticipantsPage";
 import EventDetailPage from "./pages/EventDetailPage";
 import AddExpensePage from "./pages/AddExpensePage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage />} />
-        <Route path="/create-event" element={<CreateEventPage />} />
+
+        <Route
+          path="/create-event"
+          element={
+            <ProtectedRoute>
+              <CreateEventPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/event/:eventId/add-participants"
           element={<AddParticipantsPage />}
