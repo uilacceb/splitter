@@ -5,18 +5,57 @@ import AddParticipantsPage from "./pages/AddParticipantsPage";
 import EventDetailPage from "./pages/EventDetailPage";
 import AddExpensePage from "./pages/AddExpensePage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Header from "./components/Header";
+import FriendsPage from "./pages/FriendsPage";
+import GroupPage from "./pages/GroupPage";
+import AccountPage from "./pages/AccountPage";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage />} />
-
+        <Route
+          path="/friends"
+          element={
+            <ProtectedRoute>
+              <>
+                <Header />
+                <FriendsPage />
+              </>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/groups"
+          element={
+            <ProtectedRoute>
+              <>
+                <Header />
+                <GroupPage />
+              </>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/account"
+          element={
+            <ProtectedRoute>
+              <>
+                <Header />
+                <AccountPage />
+              </>
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/create-event"
           element={
             <ProtectedRoute>
-              <CreateEventPage />
+              <>
+                <Header />
+                <CreateEventPage />
+              </>
             </ProtectedRoute>
           }
         />

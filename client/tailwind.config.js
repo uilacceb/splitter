@@ -4,7 +4,11 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['Share Tech', 'sans-serif'], //set default font to Share Tech
+      },
+    },
   },
   plugins: [],
 }
