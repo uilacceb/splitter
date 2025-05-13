@@ -9,6 +9,7 @@ import Header from "./components/Header";
 import FriendsPage from "./pages/FriendsPage";
 import GroupPage from "./pages/GroupPage";
 import AccountPage from "./pages/AccountPage";
+import AddFriendsPage from "./pages/AddFriendsPage";
 
 function App() {
   return (
@@ -22,6 +23,17 @@ function App() {
               <>
                 <Header />
                 <FriendsPage />
+              </>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/add-friend"
+          element={
+            <ProtectedRoute>
+              <>
+                <Header />
+                <AddFriendsPage />
               </>
             </ProtectedRoute>
           }

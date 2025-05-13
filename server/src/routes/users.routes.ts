@@ -16,6 +16,7 @@ userRouter.post("/google-auth", async (req, res) => {
         name,
         picture,
         googleId: sub,
+        friendList: [],
       });
     }
 

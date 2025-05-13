@@ -19,7 +19,7 @@ const LoginPage = () => {
 
     localStorage.setItem("user", JSON.stringify(res.data));
     setUser(res.data);
-    navigate("/create-event");
+    navigate("/friends");
   };
 
   return (

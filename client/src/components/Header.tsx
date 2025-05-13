@@ -5,9 +5,15 @@ const Header = () => {
   const navigate = useNavigate();
   return (
     <div className="flex justify-evenly items-center bg-gray-800 text-white p-4">
-      <p onClick={() => navigate("/friends")}>Friends</p>
-      <p onClick={() => navigate("/groups")}>Groups</p>
-      <p onClick={() => navigate("/account")}>Account</p>
+      <p className="cursor-pointer" onClick={() => navigate("/friends")}>
+        Friends
+      </p>
+      <p className="cursor-pointer" onClick={() => navigate("/groups")}>
+        Groups
+      </p>
+      <p className="cursor-pointer" onClick={() => navigate("/account")}>
+        Account
+      </p>
     </div>
   );
 };
