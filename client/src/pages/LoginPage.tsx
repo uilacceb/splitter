@@ -3,15 +3,22 @@ import { jwtDecode } from "jwt-decode";
 import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const { setUser } = useAuth();
-  const handleLoginSuccess = (credentialResponse: any) => {
+  const handleLoginSuccess = async (credentialResponse: any) => {
     const decoded: any = jwtDecode(credentialResponse.credential);
-    localStorage.setItem("user", JSON.stringify(decoded));
-    console.log(decoded);
-    setUser(decoded);
+    const res = await axios.post("/api/users/google-auth", {
+      email: decoded.email,
+      name: decoded.name,
+      picture: decoded.picture,
+      sub: decoded.sub, // unique Google ID
+    });
+
+    localStorage.setItem("user", JSON.stringify(res.data));
+    setUser(res.data);
     navigate("/create-event");
   };
 
