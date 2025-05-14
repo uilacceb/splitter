@@ -35,6 +35,7 @@ const Requests = () => {
     try {
       await axios.put(`/api/users/friends/requests/${requestId}/accept`);
       setRequests((prev) => prev.filter((req) => req._id !== requestId));
+      
     } catch (error) {
       console.error("Failed to accept friend request", error);
     }

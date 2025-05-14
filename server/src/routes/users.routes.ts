@@ -83,13 +83,21 @@ userRouter.post("/friends/request", async (req: any, res: any) => {
         .json({ message: "You can't send a friend request to yourself" });
     }
 
-    const existingRequest = await FriendRequest.findOne({ from, to });
-    if (existingRequest) {
-      return res.status(400).json({ message: "Friend request already sent" });
-    }
     const fromUser = await User.findById(from);
     if (fromUser?.friendList.includes(to)) {
       return res.status(400).json({ message: "You are already friends" });
+    }
+
+    const existingRequest = await FriendRequest.findOne({
+      $or: [
+        { from, to },
+        { from: to, to: from },
+      ],
+      status: "pending",
+    });
+
+    if (existingRequest) {
+      return res.status(400).json({ message: "Friend request already sent" });
     }
     const newRequest = await FriendRequest.create({ from, to });
 

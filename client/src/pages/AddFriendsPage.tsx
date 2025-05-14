@@ -16,6 +16,7 @@ const AddFriendsPage = () => {
   const [loading, setLoading] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [sentRequests, setSentRequests] = useState<string[]>([]); // to track requests sent
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const raw = localStorage.getItem("friendRequests");
   const requests = raw ? JSON.parse(raw) : [];
@@ -55,6 +56,7 @@ const AddFriendsPage = () => {
 
   // Handle friend request
   const sendFriendRequest = async (userId: string) => {
+    setError("");
     try {
       const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
       await axios.post(`/api/users/friends/request`, {
@@ -62,8 +64,11 @@ const AddFriendsPage = () => {
         from: currentUser._id,
       }); // you need this endpoint
       setSentRequests((prev) => [...prev, userId]);
-    } catch (error) {
-      console.error("Failed to send friend request", error);
+    } catch (err: any) {
+      const msg =
+        err.response?.data?.message || "Failed to send friend request";
+      setError(msg);
+      setTimeout(() => setError(""), 3000);
     }
   };
 
@@ -83,7 +88,7 @@ const AddFriendsPage = () => {
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search user by email"
       />
-
+      {error && <p className="mt-2 text-red-600 font-medium">{error}</p>}
       {loading && <p className="mt-2 text-gray-500">Searching...</p>}
 
       {!loading && results.length > 0 && (
