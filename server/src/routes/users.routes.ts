@@ -1,6 +1,7 @@
 import express from "express";
 import User from "../models/User";
 import FriendRequest from "../models/FriendRequest";
+import mongoose from "mongoose";
 
 const userRouter = express.Router();
 
@@ -68,6 +69,32 @@ userRouter.post("/friends/request", async (req: any, res: any) => {
       .json({ message: "Friend request sent", request: newRequest });
   } catch (error) {
     res.status(500).json({ message: "Failed to send friend request", error });
+  }
+});
+
+// GET /api/users/friends/requests?userId=xyz
+userRouter.get("/friends/requests", async (req: any, res: any) => {
+  const { userId } = req.query;
+
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({ message: "Invalid User ID format" });
+  }
+
+  try {
+    const requests = await FriendRequest.find({ to: userId, status: "pending" })
+      .populate("from", "name email picture")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(requests);
+  } catch (error: any) {
+    console.error("Error fetching friend requests:", error);
+    res
+      .status(500)
+      .json({ message: "Failed to get friend requests", error: error.message });
   }
 });
 

@@ -10,6 +10,7 @@ import FriendsPage from "./pages/FriendsPage";
 import GroupPage from "./pages/GroupPage";
 import AccountPage from "./pages/AccountPage";
 import AddFriendsPage from "./pages/AddFriendsPage";
+import Requests from "./pages/RequestPage";
 
 function App() {
   return (
@@ -34,6 +35,17 @@ function App() {
               <>
                 <Header />
                 <AddFriendsPage />
+              </>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/requests"
+          element={
+            <ProtectedRoute>
+              <>
+                <Header />
+                <Requests />
               </>
             </ProtectedRoute>
           }
