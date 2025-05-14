@@ -30,6 +30,24 @@ const Requests = () => {
     fetchRequests();
   }, []);
 
+  const acceptRequest = async (requestId: string) => {
+    try {
+      await axios.put(`/api/users/friends/requests/${requestId}/accept`);
+      setRequests((prev) => prev.filter((req) => req._id !== requestId));
+    } catch (error) {
+      console.error("Failed to accept friend request", error);
+    }
+  };
+
+  const ignoreRequest = async (requestId: string) => {
+    try {
+      await axios.delete(`/api/users/friends/requests/${requestId}`);
+      setRequests((prev) => prev.filter((req) => req._id !== requestId));
+    } catch (error) {
+      console.error("Failed to ignore friend request", error);
+    }
+  };
+
   return (
     <div className="p-4">
       <h2 className="text-xl font-semibold mb-4">Friend Requests</h2>
@@ -45,8 +63,14 @@ const Requests = () => {
                 <p className="text-sm text-gray-600">{req.from.email}</p>
               </div>
               <div className="flex items-center space-x-2">
-                <Check className="text-[#39625C]" />
-                <X className="text-[#e24f3b]" />
+                <Check
+                  className="text-[#39625C]"
+                  onClick={() => acceptRequest(req._id)}
+                />
+                <X
+                  className="text-[#e24f3b]"
+                  onClick={() => ignoreRequest(req._id)}
+                />
               </div>
             </li>
           ))}

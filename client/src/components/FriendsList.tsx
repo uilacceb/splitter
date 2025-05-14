@@ -1,38 +1,44 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+type Friend = {
+  _id: string;
+  name: string;
+  picture: string;
+  email?: string;
+};
 
 const FriendsList = () => {
-  type Friend = {
-    id: number;
-    name: string;
-  };
-  const friends: Friend[] = [
-    { id: 1, name: "John Doe" },
-    { id: 2, name: "Jane Smith" },
-    { id: 3, name: "Alice Johnson" },
-    { id: 4, name: "Bob Brown" },
-    { id: 5, name: "Charlie Davis" },
-    { id: 6, name: "Diana Prince" },
-    { id: 7, name: "Ethan Hunt" },
-    { id: 8, name: "Fiona Apple" },
-    { id: 9, name: "George Clooney" },
-    { id: 10, name: "Hannah Montana" },
-    { id: 11, name: "Ian Somerhalder" },
-    { id: 12, name: "Jack Sparrow" },
-    { id: 13, name: "Katy Perry" },
-    { id: 14, name: "Liam Neeson" },
-    { id: 15, name: "Mia Farrow" },
-    { id: 16, name: "Noah Centineo" },
-    { id: 17, name: "Olivia Wilde" },
-    { id: 18, name: "Paul Rudd" },
-    { id: 19, name: "Quentin Tarantino" },
-    { id: 20, name: "Rihanna Fenty" },
-  ];
+  const [friends, setFriends] = useState<Friend[]>([]);
+
+  useEffect(() => {
+    const fetchFriends = async () => {
+      const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+
+      try {
+        const res = await axios.get(
+          `/api/users/friends?userId=${currentUser._id}`
+        );
+        setFriends(res.data);
+      } catch (error) {
+        console.error("Failed to fetch friend list", error);
+      }
+    };
+
+    fetchFriends();
+  }, []);
+
   return (
     <div className="pl-10">
       <h2>Friends ({friends.length})</h2>
       <div className="mt-2 space-y-1">
-        {friends.map((friend) => (
-          <div key={friend.id} className="text-sm text-gray-700">
+        {friends?.map((friend) => (
+          <div key={friend._id} className="text-sm text-gray-700">
+            <img
+              src={friend.picture}
+              alt={friend.name}
+              className="w-8 h-8 rounded-full inline-block mr-2"
+            />
             {friend.name}
           </div>
         ))}

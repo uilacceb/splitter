@@ -28,6 +28,32 @@ userRouter.post("/google-auth", async (req, res) => {
   }
 });
 
+userRouter.get("/friends", async (req: any, res: any) => {
+  const { userId } = req.query;
+
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+
+  try {
+    const user = await User.findById(userId).populate(
+      "friendList",
+      "name email _id picture"
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user.friendList);
+  } catch (error: any) {
+    console.error("Failed to fetch friend list:", error.message);
+    res
+      .status(500)
+      .json({ message: "Failed to fetch friend list", error: error.message });
+  }
+});
+
 userRouter.get("/search", async (req: any, res: any) => {
   try {
     const query = req.query.query?.toString().trim();
@@ -97,5 +123,62 @@ userRouter.get("/friends/requests", async (req: any, res: any) => {
       .json({ message: "Failed to get friend requests", error: error.message });
   }
 });
+
+// PUT /api/users/friends/requests/:requestId/accept
+userRouter.put(
+  "/friends/requests/:requestId/accept",
+  async (req: any, res: any) => {
+    try {
+      const requestId = req.params.requestId;
+      const request = await FriendRequest.findById(requestId);
+
+      if (!request || request.status !== "pending") {
+        return res
+          .status(400)
+          .json({ message: "Request not found or already handled" });
+      }
+
+      // Add each user to the other's friend list
+      await User.findByIdAndUpdate(request.from, {
+        $addToSet: { friendList: request.to },
+      });
+      await User.findByIdAndUpdate(request.to, {
+        $addToSet: { friendList: request.from },
+      });
+
+      // Update request status
+      request.status = "accepted";
+      await request.save();
+
+      res.status(200).json({ message: "Friend request accepted" });
+    } catch (error: any) {
+      res
+        .status(500)
+        .json({ message: "Failed to accept request", error: error.message });
+    }
+  }
+);
+
+// DELETE /api/users/friends/requests/:requestId
+userRouter.delete(
+  "/friends/requests/:requestId",
+  async (req: any, res: any) => {
+    try {
+      const requestId = req.params.requestId;
+      const request = await FriendRequest.findById(requestId);
+
+      if (!request) {
+        return res.status(404).json({ message: "Friend request not found" });
+      }
+
+      await FriendRequest.findByIdAndDelete(requestId);
+      res.status(200).json({ message: "Friend request ignored (deleted)" });
+    } catch (error: any) {
+      res
+        .status(500)
+        .json({ message: "Failed to ignore request", error: error.message });
+    }
+  }
+);
 
 export default userRouter;

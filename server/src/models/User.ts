@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
 const userSchema = new Schema(
   {
@@ -6,7 +6,7 @@ const userSchema = new Schema(
     name: String,
     picture: String, //Google profile picture
     googleId: { type: String, required: true, unique: true }, // Google `sub` field
-    friendList: { type: [String], default: [] }, // Array of user
+    friendList: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // Array of user
   },
   { timestamps: true }
 );
