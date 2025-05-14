@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { UserPlus, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { request } from "http";
 
 type User = {
   _id: string; // MongoDB usually uses _id
@@ -16,6 +17,8 @@ const AddFriendsPage = () => {
   const [notFound, setNotFound] = useState(false);
   const [sentRequests, setSentRequests] = useState<string[]>([]); // to track requests sent
   const navigate = useNavigate();
+  const raw = localStorage.getItem("friendRequests");
+  const requests = raw ? JSON.parse(raw) : [];
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -66,8 +69,11 @@ const AddFriendsPage = () => {
 
   return (
     <div className="flex flex-col p-4">
-      <p className="text-right" onClick={() => navigate("/requests")}>
-        Requests (0)
+      <p
+        className="text-right cursor-pointer"
+        onClick={() => navigate("/requests")}
+      >
+        Requests ({requests ? requests.length : 0})
       </p>
       <label htmlFor="email">Enter the email</label>
       <input

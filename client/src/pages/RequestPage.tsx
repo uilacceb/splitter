@@ -22,6 +22,7 @@ const Requests = () => {
           `/api/users/friends/requests?userId=${currentUser._id}`
         );
         setRequests(res.data);
+        localStorage.setItem("friendRequests", JSON.stringify(res.data));
       } catch (error) {
         console.error("Failed to fetch friend requests", error);
       }
