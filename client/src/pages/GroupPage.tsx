@@ -1,7 +1,11 @@
-import React from "react";
+import NoGroups from "../components/NoGroups";
 
 const GroupPage = () => {
-  return <div>GroupPage</div>;
+  return (
+    <>
+      <NoGroups />
+    </>
+  );
 };
 
 export default GroupPage;

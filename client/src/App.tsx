@@ -11,6 +11,7 @@ import GroupPage from "./pages/GroupPage";
 import AccountPage from "./pages/AccountPage";
 import AddFriendsPage from "./pages/AddFriendsPage";
 import Requests from "./pages/RequestPage";
+import CreateGroupPage from "./pages/CreateGroupPage";
 
 function App() {
   return (
@@ -35,6 +36,17 @@ function App() {
               <>
                 <Header />
                 <AddFriendsPage />
+              </>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/create-group"
+          element={
+            <ProtectedRoute>
+              <>
+                <Header />
+                <CreateGroupPage />
               </>
             </ProtectedRoute>
           }
