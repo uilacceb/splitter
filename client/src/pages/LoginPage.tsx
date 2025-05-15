@@ -3,10 +3,12 @@ import { jwtDecode } from "jwt-decode";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useRequestCounts } from "../context/RequestContext";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const { setUser } = useAuth();
+  const { refreshCounts } = useRequestCounts();
   const handleLoginSuccess = async (credentialResponse: any) => {
     const decoded: any = jwtDecode(credentialResponse.credential);
     const res = await axios.post("/api/users/google-auth", {
@@ -17,6 +19,7 @@ const LoginPage = () => {
     });
 
     localStorage.setItem("user", JSON.stringify(res.data));
+    refreshCounts();
     setUser(res.data);
     navigate("/friends");
   };

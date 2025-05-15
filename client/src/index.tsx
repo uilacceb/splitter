@@ -5,6 +5,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AuthProvider } from "./context/AuthContext";
+import { RequestProvider } from "./context/RequestContext";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -15,7 +16,9 @@ root.render(
       clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID as string}
     >
       <AuthProvider>
-        <App />
+        <RequestProvider>
+          <App />
+        </RequestProvider>
       </AuthProvider>
     </GoogleOAuthProvider>
   </React.StrictMode>

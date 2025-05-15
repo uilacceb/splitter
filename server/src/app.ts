@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import eventRouter from "./routes/events.routes";
 import expenseRouter from "./routes/expenses.routes";
 import userRouter from "./routes/users.routes";
+import groupRouter from "./routes/groups.routes";
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use("/api/events", eventRouter);
 app.use("/api/expenses", expenseRouter);
 app.use("/api/users", userRouter);
+app.use("/api/groups", groupRouter);
 
 mongoose
   .connect(process.env.MONGO_URI!)

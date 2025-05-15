@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { UserPlus, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { request } from "http";
+import { useRequestCounts } from "../context/RequestContext";
 
 type User = {
   _id: string; // MongoDB usually uses _id
@@ -18,8 +18,7 @@ const AddFriendsPage = () => {
   const [sentRequests, setSentRequests] = useState<string[]>([]); // to track requests sent
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const raw = localStorage.getItem("friendRequests");
-  const requests = raw ? JSON.parse(raw) : [];
+  const { counts, refreshCounts } = useRequestCounts();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -64,6 +63,7 @@ const AddFriendsPage = () => {
         from: currentUser._id,
       }); // you need this endpoint
       setSentRequests((prev) => [...prev, userId]);
+      refreshCounts();
     } catch (err: any) {
       const msg =
         err.response?.data?.message || "Failed to send friend request";
@@ -78,7 +78,7 @@ const AddFriendsPage = () => {
         className="text-right cursor-pointer"
         onClick={() => navigate("/requests")}
       >
-        Requests ({requests ? requests.length : 0})
+        Requests ({counts.total})
       </p>
       <label htmlFor="email">Enter the email</label>
       <input
