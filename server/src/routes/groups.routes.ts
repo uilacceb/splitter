@@ -32,10 +32,9 @@ groupRouter.get("/requests", async (req, res) => {
 // GET: Group by ID
 groupRouter.get("/:id", async (req: any, res: any) => {
   try {
-    const group = await Group.findById(req.params.id).populate(
-      "members",
-      "name email picture"
-    );
+    const group = await Group.findById(req.params.id)
+      .populate("members", "name email picture")
+      .populate("createdBy", "_id");
     if (!group) return res.status(404).json({ message: "Group not found" });
 
     res.json(group);
@@ -59,7 +58,8 @@ groupRouter.post("/", async (req: any, res: any) => {
     const newGroup = new Group({
       title,
       icon,
-      members: [new mongoose.Types.ObjectId(fromUserId)],
+      members: [fromUserId],
+      createdBy: fromUserId,
     });
 
     await newGroup.save();

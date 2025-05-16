@@ -12,6 +12,7 @@ import AddFriendsPage from "./pages/AddFriendsPage";
 import Requests from "./pages/RequestPage";
 import CreateGroupPage from "./pages/CreateGroupPage";
 import GroupInfoPage from "./pages/GroupInfoPage";
+import EditGroupPage from "./pages/EditGroupPage";
 
 function App() {
   return (
@@ -80,6 +81,17 @@ function App() {
               <>
                 <Header />
                 <GroupInfoPage />
+              </>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/groups/:groupId/edit"
+          element={
+            <ProtectedRoute>
+              <>
+                <Header />
+                <EditGroupPage />
               </>
             </ProtectedRoute>
           }

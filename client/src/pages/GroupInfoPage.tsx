@@ -7,6 +7,9 @@ type Group = {
   _id: string;
   title: string;
   icon?: string;
+  createdBy: {
+    _id: string;
+  };
   members: {
     _id: string;
     name: string;
@@ -19,6 +22,7 @@ const GroupInfoPage = () => {
   const { groupId } = useParams<{ groupId: string }>();
   const [group, setGroup] = useState<Group | null>(null);
   const navigate = useNavigate();
+  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
     const fetchGroup = async () => {
@@ -41,8 +45,9 @@ const GroupInfoPage = () => {
       <PencilLine
         color="#bcc2be"
         className="ml-auto cursor-pointer"
-        onClick={()=>navigate(`/groups/${group._id}/edit`)}
+        onClick={() => navigate(`/groups/${group._id}/edit`)}
       />
+
       <img
         src={group.icon}
         alt={group.title}
