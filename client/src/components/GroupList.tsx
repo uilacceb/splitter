@@ -1,42 +1,23 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 type Group = {
   _id: string;
   title: string;
   icon?: string;
-  members?: string[]; // optional, to support memberCount fallback
+  members?: string[];
 };
 
-const GroupList = () => {
-  const [groups, setGroups] = useState<Group[]>([]);
-
-  useEffect(() => {
-    const fetchGroups = async () => {
-      const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-
-      try {
-        const res = await axios.get(`/api/groups?userId=${currentUser._id}`);
-        setGroups(res.data);
-      } catch (error) {
-        console.error("Failed to fetch group list", error);
-      }
-    };
-
-    fetchGroups();
-  }, []);
-
+const GroupList = ({ groups }: { groups: Group[] }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="pl-10">
+    <div className="pl-10 mt-8">
       <h2>Groups ({groups.length})</h2>
       <div className="mt-2 space-y-1">
         {groups.map((group) => (
           <div
             key={group._id}
-            className="text-sm text-gray-700 flex items-center"
+            className="text-sm text-gray-700 flex items-center cursor-pointer"
             onClick={() => navigate(`/groups/${group._id}`)}
           >
             <img
