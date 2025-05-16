@@ -3,6 +3,7 @@ import { groupIcons } from "../icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useRequestCounts } from "../context/RequestContext";
+import { RefreshCcw } from "lucide-react";
 
 type Friend = {
   _id: string;
@@ -104,6 +105,11 @@ const CreateGroupPage = () => {
     }
   };
 
+  const refreshIcon = () => {
+    const index = Math.floor(Math.random() * groupIcons.length);
+    setRandomIcon(groupIcons[index]);
+  };
+
   return (
     <>
       <div className=" pr-4 pt-4">
@@ -131,9 +137,18 @@ const CreateGroupPage = () => {
 
         <div>
           <h1 className="text-2xl font-semibold pb-2">Group Icon</h1>
-          {randomIcon && (
-            <img src={randomIcon} alt="Group Icon" width={50} height={50} />
-          )}
+          <div className="flex items-center space-x-2">
+            {randomIcon && (
+              <img
+                src={randomIcon}
+                alt="Group Icon"
+                width={50}
+                height={50}
+                className="mr-6"
+              />
+            )}
+            <RefreshCcw color="#a9b0ab" onClick={refreshIcon} />
+          </div>
         </div>
 
         <div>
