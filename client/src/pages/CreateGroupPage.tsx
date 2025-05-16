@@ -136,19 +136,26 @@ const CreateGroupPage = () => {
         </div>
 
         <div>
-          <h1 className="text-2xl font-semibold pb-2">Group Icon</h1>
+          <h1 className="text-2xl font-semibold pb-4">Group Icon</h1>
           <div className="flex items-center space-x-2">
             {randomIcon && (
               <img
                 src={randomIcon}
                 alt="Group Icon"
-                width={50}
-                height={50}
+                width={70}
+                height={70}
                 className="mr-6"
               />
             )}
             <RefreshCcw color="#a9b0ab" onClick={refreshIcon} />
           </div>
+          <a
+            href="https://www.flaticon.com/free-icons/bee"
+            title="icons reference"
+            className="text-sm pt-4 text-gray-500 block w-[70px]"
+          >
+            (by Freepik - Flaticon)
+          </a>
         </div>
 
         <div>

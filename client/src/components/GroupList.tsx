@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 type Group = {
   _id: string;
@@ -26,6 +27,8 @@ const GroupList = () => {
     fetchGroups();
   }, []);
 
+  const navigate = useNavigate();
+
   return (
     <div className="pl-10">
       <h2>Groups ({groups.length})</h2>
@@ -34,6 +37,7 @@ const GroupList = () => {
           <div
             key={group._id}
             className="text-sm text-gray-700 flex items-center"
+            onClick={() => navigate(`/groups/${group._id}`)}
           >
             <img
               src={group.icon || "/default-group-icon.png"}

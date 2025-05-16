@@ -29,6 +29,22 @@ groupRouter.get("/requests", async (req, res) => {
   }
 });
 
+// GET: Group by ID
+groupRouter.get("/:id", async (req: any, res: any) => {
+  try {
+    const group = await Group.findById(req.params.id).populate(
+      "members",
+      "name email picture"
+    );
+    if (!group) return res.status(404).json({ message: "Group not found" });
+
+    res.json(group);
+  } catch (err) {
+    console.error("Error fetching group:", err);
+    res.status(500).json({ message: "Failed to load group" });
+  }
+});
+
 //POST: Create a new group
 groupRouter.post("/", async (req: any, res: any) => {
   const { title, icon, members, fromUserId } = req.body;
@@ -88,7 +104,6 @@ groupRouter.put("/requests/:id/accept", async (req: any, res: any) => {
   }
 });
 
-// PUT: Reject/Ignore a group request
 // DELETE: Ignore (delete) a group request
 groupRouter.delete("/requests/:id", async (req: any, res: any) => {
   const requestId = req.params.id;
@@ -103,6 +118,78 @@ groupRouter.delete("/requests/:id", async (req: any, res: any) => {
   } catch (err) {
     console.error("Error deleting group request:", err);
     res.status(500).json({ message: "Failed to ignore group request" });
+  }
+});
+
+// PUT: Update group title and/or icon
+groupRouter.put("/:id/edit", async (req: any, res: any) => {
+  const { title, icon } = req.body;
+  const groupId = req.params.id;
+
+  try {
+    const updatedGroup = await Group.findByIdAndUpdate(
+      groupId,
+      {
+        ...(title && { title }), // only update if provided
+        ...(icon && { icon }),
+      },
+      { new: true } // return the updated group
+    );
+
+    if (!updatedGroup) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+
+    res.json(updatedGroup);
+  } catch (err) {
+    console.error("Error updating group:", err);
+    res.status(500).json({ message: "Failed to update group" });
+  }
+});
+
+// PUT: Add a member
+groupRouter.put("/:id/members/add", async (req: any, res: any) => {
+  const groupId = req.params.id;
+  const { userId } = req.body;
+
+  if (!userId) return res.status(400).json({ message: "userId is required" });
+
+  try {
+    const group = await Group.findByIdAndUpdate(
+      groupId,
+      { $addToSet: { members: userId } },
+      { new: true }
+    ).populate("members", "name email picture");
+
+    if (!group) return res.status(404).json({ message: "Group not found" });
+
+    res.json(group);
+  } catch (err) {
+    console.error("Error adding member:", err);
+    res.status(500).json({ message: "Failed to add member" });
+  }
+});
+
+// PUT: Remove a member
+groupRouter.put("/:id/members/remove", async (req: any, res: any) => {
+  const groupId = req.params.id;
+  const { userId } = req.body;
+
+  if (!userId) return res.status(400).json({ message: "userId is required" });
+
+  try {
+    const group = await Group.findByIdAndUpdate(
+      groupId,
+      { $pull: { members: userId } },
+      { new: true }
+    ).populate("members", "name email picture");
+
+    if (!group) return res.status(404).json({ message: "Group not found" });
+
+    res.json(group);
+  } catch (err) {
+    console.error("Error removing member:", err);
+    res.status(500).json({ message: "Failed to remove member" });
   }
 });
 
