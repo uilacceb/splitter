@@ -9,4 +9,4 @@ const groupSchema = new Schema(
   { timestamps: true }
 );
 
-export default model("User", groupSchema);
+export default model("Group", groupSchema);

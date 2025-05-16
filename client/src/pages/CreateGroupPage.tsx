@@ -14,6 +14,8 @@ const CreateGroupPage = () => {
   const [query, setQuery] = useState("");
   const [friends, setFriends] = useState<Friend[]>([]);
   const [selectedFriends, setSelectedFriends] = useState<Friend[]>([]);
+  const [groupName, setGroupName] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const index = Math.floor(Math.random() * groupIcons.length);
@@ -50,29 +52,85 @@ const CreateGroupPage = () => {
     setQuery(""); // clear search field
   };
 
+  const removeFriendFromGroup = (friend: Friend) => {
+    setSelectedFriends((prev) => prev.filter((f) => f._id !== friend._id));
+  };
+
+  const createGroup = async (e: any) => {
+    e.preventDefault();
+    setError("");
+    if (!groupName.trim()) {
+      setError("Please enter a group name.");
+      return;
+    }
+
+    if (!randomIcon) {
+      setError("Group icon is missing.");
+      return;
+    }
+
+    if (selectedFriends.length === 0) {
+      setError("Please select at least one participant.");
+      return;
+    }
+
+    setError(null); // Clear error if all is valid
+
+    const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
+    const payload = {
+      title: groupName,
+      icon: randomIcon,
+      members: selectedFriends.map((f) => f._id),
+      fromUserId: currentUser._id,
+    };
+    
+    console.log("Payload being sent:", payload);
+    try {
+      const res = await axios.post("/api/groups", payload);
+      alert("Group created successfully!");
+      setGroupName("");
+      setSelectedFriends([]);
+      setQuery("");
+      const index = Math.floor(Math.random() * groupIcons.length);
+      setRandomIcon(groupIcons[index]);
+    } catch (err) {
+      console.error("Failed to create group", err);
+      setError("Something went wrong. Please try again.");
+    }
+  };
+
   return (
-    <form className="m-4 h-screen flex flex-col space-y-4 p-4">
+    <form
+      className="m-4 h-screen flex flex-col space-y-4 p-4 gap-8"
+      onSubmit={createGroup}
+    >
       <div className="flex flex-col">
-        <label className="text-2xl font-semibold">Group Title</label>
-        <input type="text" className="border-2 border-gray-300 p-2 w-[60%]" />
+        <label className="text-2xl font-semibold pb-2">Group Title</label>
+        <input
+          type="text"
+          className="border-2 border-gray-300 p-2 w-[70%]"
+          onChange={(e) => setGroupName(e.target.value)}
+          value={groupName}
+          placeholder="Enter group name"
+        />
       </div>
 
       <div>
-        <h1 className="text-2xl font-semibold">Group Icon</h1>
+        <h1 className="text-2xl font-semibold pb-2">Group Icon</h1>
         {randomIcon && (
           <img src={randomIcon} alt="Group Icon" width={50} height={50} />
         )}
       </div>
 
       <div>
-        <h1 className="text-2xl font-semibold">Add Participants</h1>
+        <h1 className="text-2xl font-semibold pb-2">Add Participants</h1>
         <label htmlFor="email">Enter email or name</label>
         <input
           id="email"
-          className="border-2 border-gray-400 p-2 mt-1 block"
+          className="border-2 border-gray-400 p-2 mt-1 block w-[70%]"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search user by email"
+          placeholder="Search user by email or name"
         />
 
         {filteredResults.length > 0 && (
@@ -99,23 +157,36 @@ const CreateGroupPage = () => {
       </div>
 
       <div>
-        <h2 className="text-xl font-semibold mt-4">Selected Participants:</h2>
+        <h2 className="text-xl font-semibold mt-4 pb-2">
+          Selected Participants:
+        </h2>
         <ul className="mt-2 space-y-2">
           {selectedFriends.map((friend) => (
-            <li key={friend._id} className="flex items-center space-x-2">
+            <li key={friend._id} className="flex items-center w-[100%]  p-2 ">
               <img
                 src={friend.picture}
                 alt={friend.name}
                 className="w-6 h-6 rounded-full"
               />
-              <span>{friend.name}</span>
+              <span className="ml-2">{friend.name}</span>
+              <button
+                type="button"
+                className="bg-red-500 text-white ml-auto p-1 rounded cursor-pointer"
+                onClick={() => removeFriendFromGroup(friend)}
+              >
+                remove
+              </button>
             </li>
           ))}
         </ul>
       </div>
-      <button type="button" className="bg-[#2F5A62] text-white p-2 rounded text-xl">
+      <button
+        type="submit"
+        className="bg-[#2F5A62] text-white p-2 rounded text-xl"
+      >
         create
       </button>
+      {error && <span className="text-red-500  mt-1 text-2xl">{error}</span>}
     </form>
   );
 };
