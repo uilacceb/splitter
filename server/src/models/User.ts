@@ -7,6 +7,7 @@ const userSchema = new Schema(
     picture: String, //Google profile picture
     googleId: { type: String, required: true, unique: true }, // Google `sub` field
     friendList: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // Array of user
+    groupList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Group" }], // Array of group IDs
   },
   { timestamps: true }
 );

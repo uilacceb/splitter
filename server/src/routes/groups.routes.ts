@@ -18,4 +18,22 @@ groupRouter.get("/requests", async (req, res) => {
   }
 });
 
+//POST: Create a new group
+groupRouter.post("/", async (req, res) => {
+  const { title, icon, members } = req.body;
+
+  try {
+    const newGroup = new GroupRequest({
+      title,
+      icon,
+      members,
+    });
+
+    await newGroup.save();
+    res.status(201).json(newGroup);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to create group" });
+  }
+});
+
 export default groupRouter;

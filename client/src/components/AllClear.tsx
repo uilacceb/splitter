@@ -1,5 +1,3 @@
-import React from "react";
-
 const AllClear = () => {
   return (
     <div className="flex justify-center items-center pt-5 py-20 flex-col">

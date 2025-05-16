@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import CreateEventPage from "./pages/CreateEventPage";
-import AddParticipantsPage from "./pages/AddParticipantsPage";
 import EventDetailPage from "./pages/EventDetailPage";
 import AddExpensePage from "./pages/AddExpensePage";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -95,10 +94,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/event/:eventId/add-participants"
-          element={<AddParticipantsPage />}
-        />
+
         <Route
           path="/event/:eventId/add-expense"
           element={<AddExpensePage />}
