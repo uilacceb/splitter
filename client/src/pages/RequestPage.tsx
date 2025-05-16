@@ -21,7 +21,7 @@ type GroupRequest = {
   };
   groupId: {
     _id: string;
-    name: string;
+    title: string;
   };
 };
 
@@ -137,7 +137,7 @@ const Requests = () => {
               <div>
                 <p className="font-medium">{req.from.name}</p>
                 <p className="text-sm text-gray-600">
-                  invited you to <strong>{req.groupId.name}</strong>
+                  invited you to join <strong>{req.groupId?.title}</strong>
                 </p>
               </div>
               <div className="flex items-center space-x-2">

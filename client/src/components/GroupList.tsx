@@ -3,9 +3,9 @@ import axios from "axios";
 
 type Group = {
   _id: string;
-  name: string;
-  picture?: string; // optional, fallback handled in rendering
-  memberCount?: number;
+  title: string;
+  icon?: string;
+  members?: string[]; // optional, to support memberCount fallback
 };
 
 const GroupList = () => {
@@ -36,15 +36,15 @@ const GroupList = () => {
             className="text-sm text-gray-700 flex items-center"
           >
             <img
-              src={group.picture || "/default-group-icon.png"}
-              alt={group.name}
+              src={group.icon || "/default-group-icon.png"}
+              alt={group.title}
               className="w-8 h-8 rounded-full mr-2"
             />
             <div>
-              <p>{group.name}</p>
-              {group.memberCount !== undefined && (
+              <p>{group.title}</p>
+              {group.members && (
                 <p className="text-xs text-gray-500">
-                  {group.memberCount} members
+                  {group.members.length} members
                 </p>
               )}
             </div>
