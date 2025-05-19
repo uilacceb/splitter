@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { ArrowLeft } from "lucide-react";
+import GoBack from "../components/GoBack";
 
 type Member = {
   _id: string;
@@ -66,9 +68,10 @@ const CreateEventPage = () => {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-semibold mb-4">Add Event</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="p-6 relative">
+      <GoBack />
+      <h2 className="text-2xl font-semibold mb-4 mt-4">Create an Event</h2>
+      <form onSubmit={handleSubmit} className="space-y-4 ">
         <input
           type="text"
           placeholder="Event Title"
@@ -84,9 +87,9 @@ const CreateEventPage = () => {
           onChange={(e) => setDate(e.target.value)}
         />
 
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <p className="font-medium mb-1">Select Participants</p>
+        <div className="pt-6 ">
+          <div className="flex items-center justify-between mb-2 ">
+            <p className="font-medium mb-1 ">Select Participants</p>
             <label className="flex items-center mb-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -127,13 +130,14 @@ const CreateEventPage = () => {
         </div>
 
         {error && <p className="text-red-500">{error}</p>}
-
-        <button
-          type="submit"
-          className="bg-[#2F5A62] text-white p-2 px-4 rounded text-lg"
-        >
-          Create Event
-        </button>
+        <div className="pt-4 flex justify-end">
+          <button
+            type="submit"
+            className="bg-[#2F5A62] text-white p-2 px-4 rounded text-lg"
+          >
+            Create Event
+          </button>
+        </div>
       </form>
     </div>
   );

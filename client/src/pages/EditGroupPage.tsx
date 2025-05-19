@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { useRequestCounts } from "../context/RequestContext";
 import { ArrowLeft, Edit, RefreshCcw } from "lucide-react";
+import GoBack from "../components/GoBack";
 
 type Friend = {
   _id: string;
@@ -126,13 +127,7 @@ const EditGroupPage = () => {
       className="m-4 flex flex-col space-y-4 p-4 gap-8  relative"
       onSubmit={handleUpdateGroup}
     >
-      <div
-        className="absolute top-0 left-0 cursor-pointer text-[#8d938f]"
-        onClick={() => navigate(-1)}
-      >
-        <ArrowLeft className="inline"/>
-        Go back
-      </div>
+      <GoBack />
       <div className="flex flex-col ">
         <label className="text-2xl font-semibold pb-2 ">Group Title</label>
         <input
@@ -144,7 +139,7 @@ const EditGroupPage = () => {
         />
       </div>
 
-      <div >
+      <div>
         <h1 className="text-2xl font-semibold pb-4">Group Icon</h1>
         <div className="flex items-center space-x-2">
           {randomIcon && (

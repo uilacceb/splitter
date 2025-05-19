@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { PencilLine, PlusCircle } from "lucide-react";
+import GoBack from "../components/GoBack";
 
 type Group = {
   _id: string;
@@ -61,7 +62,8 @@ const GroupInfoPage = () => {
     );
 
   return (
-    <div className="p-4">
+    <div className="p-4 relative">
+      <GoBack />
       <div
         className="flex justify-end items-center mb-4"
         onClick={() => navigate(`/groups/${group._id}/add-event`)}
