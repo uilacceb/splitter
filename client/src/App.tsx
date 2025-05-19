@@ -97,6 +97,18 @@ function App() {
           }
         />
         <Route
+          path="/groups/:groupId/add-event"
+          element={
+            <ProtectedRoute>
+              <>
+                <Header />
+                <CreateEventPage />
+              </>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/account"
           element={
             <ProtectedRoute>

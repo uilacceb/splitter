@@ -18,18 +18,16 @@ type Group = {
   }[];
 };
 
-type Expense = {
+type Event = {
   _id: string;
-  description: string;
-  amount: number;
-  paidBy: string;
+  title: string;
   date: string;
 };
 
 const GroupInfoPage = () => {
   const { groupId } = useParams<{ groupId: string }>();
   const [group, setGroup] = useState<Group | null>(null);
-  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,17 +40,17 @@ const GroupInfoPage = () => {
       }
     };
 
-    const fetchExpenses = async () => {
+    const fetchEvents = async () => {
       try {
-        const res = await axios.get(`/api/expenses?groupId=${groupId}`);
-        setExpenses(res.data);
-      } catch (err) {
-        console.error("Failed to fetch expenses", err);
+        const res = await axios.get(`/api/events?groupId=${groupId}`);
+        setEvents(res.data);
+      } catch (error) {
+        console.error("Failed to fetch events", error);
       }
     };
 
     fetchGroup();
-    fetchExpenses();
+    fetchEvents();
   }, [groupId]);
 
   if (!group)
@@ -66,10 +64,10 @@ const GroupInfoPage = () => {
     <div className="p-4">
       <div
         className="flex justify-end items-center mb-4"
-        onClick={() => navigate(`/groups/${group._id}/add-expense`)}
+        onClick={() => navigate(`/groups/${group._id}/add-event`)}
       >
         <PlusCircle color="#39625C" className="cursor-pointer inline" />
-        <span className="pl-1">Add expense</span>
+        <span className="pl-1">Add Event</span>
       </div>
 
       <img
@@ -86,21 +84,23 @@ const GroupInfoPage = () => {
         />
       </h2>
 
-      <h3 className="text-lg font-medium mt-8 mb-2">Expenses:</h3>
-      {expenses.length === 0 ? (
-        <p className="text-gray-600">No expenses yet.</p>
+      <h3 className="text-lg font-medium mt-8 mb-2">Events:</h3>
+      {events.length === 0 ? (
+        <p className="text-gray-600">No events yet.</p>
       ) : (
         <ul className="space-y-3">
-          {expenses.map((exp) => (
-            <li key={exp._id} className="border p-3 rounded bg-gray-50">
+          {events.map((event) => (
+            <li
+              key={event._id}
+              className="border p-3 rounded bg-gray-50 cursor-pointer"
+              onClick={() => navigate(`/events/${event._id}`)}
+            >
               <div className="flex justify-between">
-                <span>{exp.description}</span>
-                <span className="font-semibold">${exp.amount.toFixed(2)}</span>
+                <span>{event.title}</span>
+                <span className="text-sm text-gray-500">
+                  {new Date(event.date).toLocaleDateString()}
+                </span>
               </div>
-              <p className="text-sm text-gray-500">
-                Paid by {exp.paidBy} on{" "}
-                {new Date(exp.date).toLocaleDateString()}
-              </p>
             </li>
           ))}
         </ul>

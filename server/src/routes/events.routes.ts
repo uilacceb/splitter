@@ -3,24 +3,26 @@ import Event from "../models/Event";
 
 const eventRouter = express.Router();
 
-// Create a new event
-eventRouter.post("/", async (req, res) => {
+// GET: All events for a group
+eventRouter.get("/", async (req, res) => {
+  const { groupId } = req.query;
   try {
-    const { title, date, participants, createdBy } = req.body;
-    const event = await Event.create({ title, date, participants, createdBy });
-    res.status(201).json(event);
-  } catch (error) {
-    res.status(500).json({ message: "Error creating event", error });
+    const events = await Event.find({ groupId });
+    res.json(events);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch events" });
   }
 });
 
-// Get all events
-eventRouter.get("/", async (_req, res) => {
+// POST: Create a new event
+eventRouter.post("/", async (req, res) => {
+  const { title, date, participants, createdBy, groupId } = req.body;
   try {
-    const events = await Event.find();
-    res.json(events);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching events", error });
+    const event = new Event({ title, date, participants, createdBy, groupId });
+    await event.save();
+    res.status(201).json(event);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to create event" });
   }
 });
 

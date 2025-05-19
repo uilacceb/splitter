@@ -3,25 +3,27 @@ import Expense from '../models/Expense';
 
 const expenseRouter = express.Router();
 
-// Create a new expense
-expenseRouter.post('/', async (req, res) => {
+
+// GET: Expenses for a specific event
+expenseRouter.get("/expenses", async (req, res) => {
+  const { eventId } = req.query;
   try {
-    const { eventId, paidBy, amount, description } = req.body;
-    const expense = await Expense.create({ eventId, paidBy, amount, description });
-    res.status(201).json(expense);
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating expense', error });
+    const expenses = await Expense.find({ eventId });
+    res.json(expenses);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch expenses" });
   }
 });
 
-// Get expenses by event ID
-expenseRouter.get('/event/:eventId', async (req, res) => {
+// POST: Add expense to an event
+expenseRouter.post("/expenses", async (req, res) => {
+  const { eventId, paidBy, amount, description } = req.body;
   try {
-    const { eventId } = req.params;
-    const expenses = await Expense.find({ eventId });
-    res.json(expenses);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching expenses', error });
+    const expense = new Expense({ eventId, paidBy, amount, description });
+    await expense.save();
+    res.status(201).json(expense);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to add expense" });
   }
 });
 

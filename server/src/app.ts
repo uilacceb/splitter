@@ -19,6 +19,8 @@ app.use("/api/events", eventRouter);
 app.use("/api/expenses", expenseRouter);
 app.use("/api/users", userRouter);
 app.use("/api/groups", groupRouter);
+app.use("/api/events", eventRouter);
+
 
 mongoose
   .connect(process.env.MONGO_URI!)
