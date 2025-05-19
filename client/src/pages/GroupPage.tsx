@@ -16,7 +16,7 @@ const GroupPage = () => {
 
   return (
     <>
-      {groups.length === 0 ? <NoGroups /> : null}
+      {groups.length === 0 ? <NoGroups /> : <></>}
       <GroupList groups={groups} />
     </>
   );

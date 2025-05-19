@@ -33,7 +33,7 @@ const FriendsList = () => {
       <h2>Friends ({friends.length})</h2>
       <div className="mt-2 space-y-1">
         {friends?.map((friend) => (
-          <div key={friend._id} className="text-sm text-gray-700">
+          <div key={friend._id} className="text-sm text-gray-700 pb-2 pt-1">
             <img
               src={friend.picture}
               alt={friend.name}

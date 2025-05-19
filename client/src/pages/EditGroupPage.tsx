@@ -3,7 +3,7 @@ import { groupIcons } from "../icons";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { useRequestCounts } from "../context/RequestContext";
-import { Edit, RefreshCcw } from "lucide-react";
+import { ArrowLeft, Edit, RefreshCcw } from "lucide-react";
 
 type Friend = {
   _id: string;
@@ -54,7 +54,9 @@ const EditGroupPage = () => {
     const fetchFriends = async () => {
       const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
       try {
-        const res = await axios.get(`/api/users/friends?userId=${currentUser._id}`);
+        const res = await axios.get(
+          `/api/users/friends?userId=${currentUser._id}`
+        );
         setFriends(res.data);
       } catch (error) {
         console.error("Failed to fetch friend list", error);
@@ -121,21 +123,28 @@ const EditGroupPage = () => {
 
   return (
     <form
-      className="m-4 h-screen flex flex-col space-y-4 p-4 gap-8"
+      className="m-4 flex flex-col space-y-4 p-4 gap-8  relative"
       onSubmit={handleUpdateGroup}
     >
-      <div className="flex flex-col">
-        <label className="text-2xl font-semibold pb-2">Group Title</label>
+      <div
+        className="absolute top-0 left-0 cursor-pointer text-[#8d938f]"
+        onClick={() => navigate(-1)}
+      >
+        <ArrowLeft className="inline"/>
+        Go back
+      </div>
+      <div className="flex flex-col ">
+        <label className="text-2xl font-semibold pb-2 ">Group Title</label>
         <input
           type="text"
           className="border-2 border-gray-300 p-2 w-[70%]"
           onChange={(e) => setGroupName(e.target.value)}
           value={groupName}
-          placeholder="Enter group name"
+          placeholder="change your group name"
         />
       </div>
 
-      <div>
+      <div >
         <h1 className="text-2xl font-semibold pb-4">Group Icon</h1>
         <div className="flex items-center space-x-2">
           {randomIcon && (
