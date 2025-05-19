@@ -15,7 +15,6 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use("/api/events", eventRouter);
 app.use("/api/expenses", expenseRouter);
 app.use("/api/users", userRouter);
 app.use("/api/groups", groupRouter);

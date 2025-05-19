@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import CreateEventPage from "./pages/CreateEventPage";
-import EventDetailPage from "./pages/EventDetailPage";
 import AddExpensePage from "./pages/AddExpensePage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Header from "./components/Header";
@@ -13,6 +12,7 @@ import Requests from "./pages/RequestPage";
 import CreateGroupPage from "./pages/CreateGroupPage";
 import GroupInfoPage from "./pages/GroupInfoPage";
 import EditGroupPage from "./pages/EditGroupPage";
+import EventInfoPage from "./pages/EventInfoPage";
 
 function App() {
   return (
@@ -107,6 +107,17 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/groups/:groupId/events/:eventId"
+          element={
+            <ProtectedRoute>
+              <>
+                <Header />
+                <EventInfoPage />
+              </>
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/account"
@@ -135,7 +146,6 @@ function App() {
           path="/event/:eventId/add-expense"
           element={<AddExpensePage />}
         />
-        <Route path="/event/:eventId/details" element={<EventDetailPage />} />
       </Routes>
     </Router>
   );

@@ -5,7 +5,7 @@ const expenseRouter = express.Router();
 
 
 // GET: Expenses for a specific event
-expenseRouter.get("/expenses", async (req, res) => {
+expenseRouter.get("/", async (req, res) => {
   const { eventId } = req.query;
   try {
     const expenses = await Expense.find({ eventId });
@@ -16,7 +16,7 @@ expenseRouter.get("/expenses", async (req, res) => {
 });
 
 // POST: Add expense to an event
-expenseRouter.post("/expenses", async (req, res) => {
+expenseRouter.post("/", async (req, res) => {
   const { eventId, paidBy, amount, description } = req.body;
   try {
     const expense = new Expense({ eventId, paidBy, amount, description });

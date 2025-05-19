@@ -95,7 +95,9 @@ const GroupInfoPage = () => {
             <li
               key={event._id}
               className="border p-3 rounded bg-gray-50 cursor-pointer"
-              onClick={() => navigate(`/events/${event._id}`)}
+              onClick={() =>
+                navigate(`/groups/${group._id}/events/${event._id}`)
+              }
             >
               <div className="flex justify-between">
                 <span>{event.title}</span>
