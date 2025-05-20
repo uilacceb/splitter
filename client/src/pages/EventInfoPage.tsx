@@ -46,6 +46,21 @@ const EventInfoPage = () => {
     fetchExpenses();
   }, [eventId]);
 
+  const handleDelete = async (expenseId: string) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this expense?"
+    );
+    if (!confirmed) return;
+
+    try {
+      await axios.delete(`/api/expenses/${expenseId}`);
+      setExpenses((prev) => prev.filter((e) => e._id !== expenseId));
+    } catch (error) {
+      console.error("Failed to delete expense", error);
+      alert("Failed to delete expense. Please try again.");
+    }
+  };
+
   const navigate = useNavigate();
   return (
     <div className="p-4 relative">
@@ -85,6 +100,24 @@ const EventInfoPage = () => {
                     Paid by: {expense.paidBy?.name || "Unknown"}
                   </p>
                 </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  className="text-blue-600 text-sm"
+                  onClick={() =>
+                    navigate(
+                      `/groups/${groupId}/events/${eventId}/edit-expense/${expense._id}`
+                    )
+                  }
+                >
+                  Edit
+                </button>
+                <button
+                  className="text-red-600 text-sm"
+                  onClick={() => handleDelete(expense._id)}
+                >
+                  Delete
+                </button>
               </div>
               <span className="text-right font-bold">
                 ${expense.amount.toFixed(2)}

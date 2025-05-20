@@ -30,4 +30,16 @@ expenseRouter.post("/", async (req, res) => {
   }
 });
 
+expenseRouter.delete("/:id", async (req: any, res:any) => {
+  try {
+    const deleted = await Expense.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ message: "Expense not found" });
+    res.json({ message: "Expense deleted" });
+  } catch (err) {
+    console.error("Error deleting expense:", err);
+    res.status(500).json({ message: "Failed to delete expense" });
+  }
+});
+
+
 export default expenseRouter;
