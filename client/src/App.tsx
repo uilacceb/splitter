@@ -108,6 +108,17 @@ function App() {
           }
         />
         <Route
+          path="/groups/:groupId/events/:eventId/add-expense"
+          element={
+            <ProtectedRoute>
+              <>
+                <Header />
+                <AddExpensePage />
+              </>
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/groups/:groupId/events/:eventId"
           element={
             <ProtectedRoute>
@@ -140,11 +151,6 @@ function App() {
               </>
             </ProtectedRoute>
           }
-        />
-
-        <Route
-          path="/event/:eventId/add-expense"
-          element={<AddExpensePage />}
         />
       </Routes>
     </Router>

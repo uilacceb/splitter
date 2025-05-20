@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useRequestCounts } from "../context/RequestContext";
 import { RefreshCcw } from "lucide-react";
+import GoBack from "../components/GoBack";
 
 type Friend = {
   _id: string;
@@ -112,7 +113,8 @@ const CreateGroupPage = () => {
 
   return (
     <>
-      <div className=" pr-4 pt-4">
+      <div className=" pr-4 pt-4 relative">
+        <GoBack />
         <p
           className="text-right cursor-pointer"
           onClick={() => navigate("/requests")}

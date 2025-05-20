@@ -1,39 +1,67 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import GoBack from "../components/GoBack";
 
 type Expense = {
   _id: string;
   description: string;
   amount: number;
-  paidBy: string;
+  paidBy: {
+    _id: string;
+    name: string;
+    picture: string;
+  };
   createdAt: string;
 };
 
 const EventInfoPage = () => {
-  const { eventId } = useParams<{ eventId: string }>();
+  const { eventId, groupId } = useParams<{
+    eventId: string;
+    groupId: string;
+  }>();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [eventTitle, setEventTitle] = useState("");
 
   useEffect(() => {
+    const fetchEventDetails = async () => {
+      try {
+        const eventRes = await axios.get(`/api/events/${eventId}`);
+        setEventTitle(eventRes.data.title);
+      } catch (error) {
+        console.error("Failed to fetch event title", error);
+      }
+    };
+
     const fetchExpenses = async () => {
       try {
         const res = await axios.get(`/api/expenses?eventId=${eventId}`);
         setExpenses(res.data);
-        if (res.data.length > 0 && res.data[0].eventId?.title) {
-          setEventTitle(res.data[0].eventId.title);
-        }
       } catch (error) {
         console.error("Failed to fetch expenses", error);
       }
     };
 
+    fetchEventDetails();
     fetchExpenses();
   }, [eventId]);
 
+  const navigate = useNavigate();
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-semibold mb-4">Event: {eventTitle}</h2>
+    <div className="p-4 relative">
+      <GoBack />
+      <div className="flex justify-end">
+        <button
+          className="flex items-center gap-2 px-4 py-2 bg-[#39625C] text-white rounded hover:bg-[#83A99B] transition duration-300"
+          type="button"
+          onClick={() =>
+            navigate(`/groups/${groupId}/events/${eventId}/add-expense`)
+          }
+        >
+          Add Expense
+        </button>
+      </div>
+      <h2 className="text-2xl font-semibold mb-4 mt-6">{eventTitle}</h2>
 
       {expenses.length === 0 ? (
         <p>No expenses recorded for this event.</p>
@@ -44,11 +72,19 @@ const EventInfoPage = () => {
               key={expense._id}
               className="border rounded p-3 bg-gray-100 flex justify-between"
             >
-              <div>
-                <p className="font-medium">{expense.description}</p>
-                <p className="text-sm text-gray-600">
-                  Paid by: {expense.paidBy}
-                </p>
+              <div className="flex items-center">
+                <img
+                  src={expense.paidBy?.picture}
+                  alt={expense.paidBy?.name || "User"}
+                  className="w-8 h-8 rounded-full"
+                />
+                <div className="ml-3">
+                  <p className="font-semibold">{expense.description}</p>
+
+                  <p className="text-sm text-gray-600">
+                    Paid by: {expense.paidBy?.name || "Unknown"}
+                  </p>
+                </div>
               </div>
               <span className="text-right font-bold">
                 ${expense.amount.toFixed(2)}
