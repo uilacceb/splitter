@@ -13,6 +13,7 @@ import CreateGroupPage from "./pages/CreateGroupPage";
 import GroupInfoPage from "./pages/GroupInfoPage";
 import EditGroupPage from "./pages/EditGroupPage";
 import EventInfoPage from "./pages/EventInfoPage";
+import EditExpensePage from "./pages/EditExpensePage";
 
 function App() {
   return (
@@ -118,6 +119,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/groups/:groupId/events/:eventId"
           element={
@@ -125,6 +127,18 @@ function App() {
               <>
                 <Header />
                 <EventInfoPage />
+              </>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/groups/:groupId/events/:eventId/edit-expense/:expenseId"
+          element={
+            <ProtectedRoute>
+              <>
+                <Header />
+                <EditExpensePage />
               </>
             </ProtectedRoute>
           }

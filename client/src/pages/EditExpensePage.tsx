@@ -9,8 +9,8 @@ type Participant = {
   picture: string;
 };
 
-const AddExpensePage = () => {
-  const { groupId, eventId } = useParams();
+const EditExpensePage = () => {
+  const { groupId, eventId, expenseId } = useParams();
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [splitType, setSplitType] = useState<"equal" | "custom">("equal");
@@ -21,17 +21,32 @@ const AddExpensePage = () => {
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
-    const fetchParticipants = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get(`/api/events/${eventId}`);
-        setParticipants(res.data.participants);
+        const [eventRes, expenseRes] = await Promise.all([
+          axios.get(`/api/events/${eventId}`),
+          axios.get(`/api/expenses/${expenseId}`),
+        ]);
+
+        setParticipants(eventRes.data.participants);
+
+        // Set these values here after verifying the keys exist
+        const expense = expenseRes.data;
+        setDescription(expense.description || "");
+        setAmount(expense.amount?.toString() || "");
+
+        if (expense.splitWith?.length === eventRes.data.participants.length) {
+          setSplitType("equal");
+        } else {
+          setSplitType("custom");
+          setSelectedIds(expense.splitWith?.map((p: any) => p._id) || []);
+        }
       } catch (err) {
-        console.error("Failed to load participants", err);
+        console.error("Failed to load expense or participants", err);
       }
     };
-
-    fetchParticipants();
-  }, [eventId]);
+    fetchData();
+  }, [eventId, expenseId]);
 
   const toggleParticipant = (id: string) => {
     setSelectedIds((prev) =>
@@ -59,9 +74,7 @@ const AddExpensePage = () => {
     }
 
     try {
-      await axios.post("/api/expenses", {
-        eventId,
-        paidBy: currentUser._id,
+      await axios.put(`/api/expenses/${expenseId}`, {
         description,
         amount: parseFloat(amount),
         splitWith: participantIds,
@@ -69,7 +82,7 @@ const AddExpensePage = () => {
 
       navigate(`/groups/${groupId}/events/${eventId}`);
     } catch (err) {
-      console.error("Failed to add expense", err);
+      console.error("Failed to update expense", err);
       setError("Something went wrong. Please try again.");
     }
   };
@@ -77,7 +90,7 @@ const AddExpensePage = () => {
   return (
     <div className="p-4 relative">
       <GoBack />
-      <h2 className="text-2xl font-semibold mb-4 mt-8">Add Expense</h2>
+      <h2 className="text-2xl font-semibold mb-4 mt-8">Edit Expense</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
@@ -127,14 +140,14 @@ const AddExpensePage = () => {
               {participants.map((p) => (
                 <li
                   key={p._id}
-                  className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-2 rounded"
+                  className="flex items-center gap-2 cursor-pointer"
                   onClick={() => toggleParticipant(p._id)}
                 >
                   <input
                     type="checkbox"
                     checked={selectedIds.includes(p._id)}
-                    onClick={(e) => e.stopPropagation()} // Prevents double toggle
-                    onChange={() => toggleParticipant(p._id)} // Handles keyboard toggle
+                    onClick={(e) => e.stopPropagation()} // prevent double toggle
+                    onChange={() => toggleParticipant(p._id)} // still handles keyboard use
                   />
                   <img
                     src={p.picture}
@@ -154,11 +167,11 @@ const AddExpensePage = () => {
           type="submit"
           className="bg-[#2F5A62] text-white p-2 px-4 rounded text-lg"
         >
-          Add Expense
+          Update Expense
         </button>
       </form>
     </div>
   );
 };
 
-export default AddExpensePage;
+export default EditExpensePage;
