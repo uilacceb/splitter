@@ -21,9 +21,15 @@ expenseRouter.get("/", async (req, res) => {
 });
 // POST: Add expense to an event
 expenseRouter.post("/", async (req, res) => {
-  const { eventId, paidBy, amount, description } = req.body;
+  const { eventId, paidBy, amount, description, splitWith } = req.body;
   try {
-    const expense = new Expense({ eventId, paidBy, amount, description });
+    const expense = new Expense({
+      eventId,
+      paidBy,
+      amount,
+      description,
+      splitWith,
+    });
     await expense.save();
     res.status(201).json(expense);
   } catch (err) {
@@ -46,7 +52,7 @@ expenseRouter.get("/:id", async (req: any, res: any) => {
   try {
     const expense = await Expense.findById(req.params.id)
       .populate("paidBy", "name picture")
-      .populate("splitWith", "name picture");
+      .populate("splitWith", "_id name picture");
 
     if (!expense) return res.status(404).json({ message: "Expense not found" });
 

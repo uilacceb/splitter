@@ -85,6 +85,27 @@ const GroupInfoPage = () => {
           onClick={() => navigate(`/groups/${group._id}/edit`)}
         />
       </h2>
+      <h3 className="text-lg font-medium mt-8 mb-2">
+        Members ({group.members.length}):
+      </h3>
+      <ul className="space-y-2">
+        {group.members.map((member) => (
+          <li
+            key={member._id}
+            className="flex items-center border p-2 rounded bg-gray-50 cursor-pointer"
+            onClick={() => navigate(`/users/${member._id}`)}
+          >
+            <img
+              src={member.picture}
+              alt={member.name}
+              className="w-5 h-5 rounded-full mr-3"
+            />
+            <div>
+              <h4 className="text-md">{member.name}</h4>
+            </div>
+          </li>
+        ))}
+      </ul>
 
       <h3 className="text-lg font-medium mt-8 mb-2">Events:</h3>
       {events.length === 0 ? (
