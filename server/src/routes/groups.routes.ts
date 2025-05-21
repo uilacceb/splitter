@@ -1,7 +1,7 @@
 import express from "express";
-import GroupRequest from "../models/GroupRequest";
 import mongoose from "mongoose";
 import Group from "../models/Group";
+import GroupRequest from "../models/GroupRequest";
 
 const groupRouter = express.Router();
 
@@ -15,15 +15,11 @@ groupRouter.get("/", async (req, res) => {
 // GET: All group requests for a user
 groupRouter.get("/requests", async (req, res) => {
   const { userId } = req.query;
-
   try {
     const requests = await GroupRequest.find({ to: userId, status: "pending" })
       .populate("groupId")
       .populate("from", "name email");
-
-    const filtered = requests.filter((r) => r.groupId && r.from); // remove null refs
-
-    res.json(filtered);
+    res.json(requests.filter((r) => r.groupId && r.from));
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch group requests" });
   }
@@ -36,64 +32,77 @@ groupRouter.get("/:id", async (req: any, res: any) => {
       .populate("members", "name email picture")
       .populate("createdBy", "_id");
     if (!group) return res.status(404).json({ message: "Group not found" });
-
     res.json(group);
   } catch (err) {
-    console.error("Error fetching group:", err);
     res.status(500).json({ message: "Failed to load group" });
   }
 });
 
-//POST: Create a new group
-groupRouter.post("/", async (req: any, res: any) => {
-  const { title, icon, members, fromUserId } = req.body;
-
+// GET: All pending group requests for this group
+groupRouter.get("/:id/pending-requests", async (req, res) => {
+  const groupId = req.params.id;
   try {
-    if (!title || !members?.length) {
-      return res
-        .status(400)
-        .json({ message: "Title and members are required" });
-    }
+    const pendingRequests = await GroupRequest.find({
+      groupId,
+      status: "pending",
+    }).populate("to", "name email picture");
+    res.json(pendingRequests);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to load pending requests" });
+  }
+});
 
-    const newGroup = new Group({
+// POST: Create group + send requests
+groupRouter.post("/", async (req, res) => {
+  const { title, icon, members, fromUserId } = req.body;
+  try {
+    const group = new Group({
       title,
       icon,
       members: [fromUserId],
       createdBy: fromUserId,
     });
+    await group.save();
 
-    await newGroup.save();
-
-    //Create group invitations
     const requests = members
-      .filter((memberId: string) => memberId !== fromUserId)
-      .map((memberId: string) => ({
-        groupId: newGroup._id,
+      .filter((id: string) => id !== fromUserId)
+      .map((id: string) => ({
+        groupId: group._id,
         from: new mongoose.Types.ObjectId(fromUserId),
-        to: new mongoose.Types.ObjectId(memberId),
+        to: new mongoose.Types.ObjectId(id),
       }));
 
     await GroupRequest.insertMany(requests);
-
-    res.status(201).json(newGroup);
+    res.status(201).json(group);
   } catch (err) {
-    console.error("Failed to save group:", err);
     res.status(500).json({ message: "Failed to create group" });
   }
 });
 
-// PUT: Update group details
-groupRouter.put("/requests/:id/accept", async (req: any, res: any) => {
-  const requestId = req.params.id;
-
+// PUT: Update group metadata
+groupRouter.put("/:id/edit", async (req, res) => {
+  const { title, icon } = req.body;
   try {
-    const request = await GroupRequest.findById(requestId);
+    const updatedGroup = await Group.findByIdAndUpdate(
+      req.params.id,
+      { ...(title && { title }), ...(icon && { icon }) },
+      { new: true }
+    );
+    res.json(updatedGroup);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to update group" });
+  }
+});
+
+// PUT: Accept a group request
+groupRouter.put("/requests/:id/accept", async (req: any, res: any) => {
+  try {
+    const request = await GroupRequest.findById(req.params.id);
     if (!request) return res.status(404).json({ message: "Request not found" });
 
     request.status = "accepted";
     await request.save();
 
-    // Add user to group members
     await Group.findByIdAndUpdate(request.groupId, {
       $addToSet: { members: request.to },
     });
@@ -104,91 +113,52 @@ groupRouter.put("/requests/:id/accept", async (req: any, res: any) => {
   }
 });
 
-// DELETE: Ignore (delete) a group request
-groupRouter.delete("/requests/:id", async (req: any, res: any) => {
-  const requestId = req.params.id;
-  ``;
+// DELETE: Ignore a request
+groupRouter.delete("/requests/:id", async (req, res) => {
   try {
-    const request = await GroupRequest.findByIdAndDelete(requestId);
-    if (!request) {
-      return res.status(404).json({ message: "Group request not found" });
-    }
-
+    const request = await GroupRequest.findByIdAndDelete(req.params.id);
     res.json({ message: "Group request ignored and deleted" });
   } catch (err) {
-    console.error("Error deleting group request:", err);
-    res.status(500).json({ message: "Failed to ignore group request" });
+    res.status(500).json({ message: "Failed to ignore request" });
   }
 });
 
-// PUT: Update group title and/or icon
-groupRouter.put("/:id/edit", async (req: any, res: any) => {
-  const { title, icon } = req.body;
+// POST: Send new invitation
+groupRouter.post("/:id/invite", async (req: any, res: any) => {
+  const { toUserId, fromUserId } = req.body;
   const groupId = req.params.id;
-
   try {
-    const updatedGroup = await Group.findByIdAndUpdate(
+    const exists = await GroupRequest.findOne({
       groupId,
-      {
-        ...(title && { title }), // only update if provided
-        ...(icon && { icon }),
-      },
-      { new: true } // return the updated group
-    );
+      to: toUserId,
+      status: "pending",
+    });
+    if (exists) return res.status(400).json({ message: "Already invited" });
 
-    if (!updatedGroup) {
-      return res.status(404).json({ message: "Group not found" });
-    }
-
-    res.json(updatedGroup);
+    const newRequest = new GroupRequest({
+      groupId,
+      from: fromUserId,
+      to: toUserId,
+    });
+    await newRequest.save();
+    res.status(201).json(newRequest);
   } catch (err) {
-    console.error("Error updating group:", err);
-    res.status(500).json({ message: "Failed to update group" });
+    res.status(500).json({ message: "Failed to send request" });
   }
 });
 
-// PUT: Add a member
-groupRouter.put("/:id/members/add", async (req: any, res: any) => {
-  const groupId = req.params.id;
+// PUT: Remove group member
+groupRouter.put("/:id/members/remove", async (req, res) => {
   const { userId } = req.body;
-
-  if (!userId) return res.status(400).json({ message: "userId is required" });
-
   try {
     const group = await Group.findByIdAndUpdate(
-      groupId,
-      { $addToSet: { members: userId } },
-      { new: true }
-    ).populate("members", "name email picture");
-
-    if (!group) return res.status(404).json({ message: "Group not found" });
-
-    res.json(group);
-  } catch (err) {
-    console.error("Error adding member:", err);
-    res.status(500).json({ message: "Failed to add member" });
-  }
-});
-
-// PUT: Remove a member
-groupRouter.put("/:id/members/remove", async (req: any, res: any) => {
-  const groupId = req.params.id;
-  const { userId } = req.body;
-
-  if (!userId) return res.status(400).json({ message: "userId is required" });
-
-  try {
-    const group = await Group.findByIdAndUpdate(
-      groupId,
+      req.params.id,
       { $pull: { members: userId } },
       { new: true }
     ).populate("members", "name email picture");
 
-    if (!group) return res.status(404).json({ message: "Group not found" });
-
     res.json(group);
   } catch (err) {
-    console.error("Error removing member:", err);
     res.status(500).json({ message: "Failed to remove member" });
   }
 });
