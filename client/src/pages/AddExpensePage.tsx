@@ -21,17 +21,17 @@ const AddExpensePage = () => {
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
-    const fetchParticipants = async () => {
+    const fetchGroupMembers = async () => {
       try {
-        const res = await axios.get(`/api/events/${eventId}`);
-        setParticipants(res.data.participants);
+        const res = await axios.get(`/api/groups/${groupId}`);
+        setParticipants(res.data.members);
       } catch (err) {
-        console.error("Failed to load participants", err);
+        console.error("Failed to load group members", err);
       }
     };
 
-    fetchParticipants();
-  }, [eventId]);
+    fetchGroupMembers();
+  }, [groupId]);
 
   const toggleParticipant = (id: string) => {
     setSelectedIds((prev) =>
@@ -133,8 +133,8 @@ const AddExpensePage = () => {
                   <input
                     type="checkbox"
                     checked={selectedIds.includes(p._id)}
-                    onClick={(e) => e.stopPropagation()} // Prevents double toggle
-                    onChange={() => toggleParticipant(p._id)} // Handles keyboard toggle
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={() => toggleParticipant(p._id)}
                   />
                   <img
                     src={p.picture}
