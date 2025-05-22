@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import GoBack from "../components/GoBack";
+import { PencilLine, Trash2 } from "lucide-react";
 
 type Expense = {
   _id: string;
@@ -22,6 +23,7 @@ const EventInfoPage = () => {
   }>();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [eventTitle, setEventTitle] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEventDetails = async () => {
@@ -61,11 +63,10 @@ const EventInfoPage = () => {
     }
   };
 
-  const navigate = useNavigate();
   return (
     <div className="p-4 relative">
       <GoBack />
-      <div className="flex justify-end">
+      <div className="flex justify-end mb-4">
         <button
           className="flex items-center gap-2 px-4 py-2 bg-[#39625C] text-white rounded hover:bg-[#83A99B] transition duration-300"
           type="button"
@@ -76,52 +77,51 @@ const EventInfoPage = () => {
           Add Expense
         </button>
       </div>
-      <h2 className="text-2xl font-semibold mb-4 mt-6">{eventTitle}</h2>
+
+      <h2 className="text-2xl font-semibold mb-6">{eventTitle}</h2>
 
       {expenses.length === 0 ? (
         <p>No expenses recorded for this event.</p>
       ) : (
-        <ul className="space-y-3">
+        <ul className="space-y-4">
           {expenses.map((expense) => (
             <li
               key={expense._id}
-              className="border rounded p-3 bg-gray-100 flex justify-between"
+              className="border rounded p-4 bg-gray-100 flex items-center justify-between shadow-sm"
             >
               <div className="flex items-center">
                 <img
                   src={expense.paidBy?.picture}
                   alt={expense.paidBy?.name || "User"}
-                  className="w-8 h-8 rounded-full"
+                  className="w-10 h-10 rounded-full mr-3"
                 />
-                <div className="ml-3">
-                  <p className="font-semibold">{expense.description}</p>
-
+                <div>
+                  <p className="font-semibold text-lg">{expense.description}</p>
                   <p className="text-sm text-gray-600">
                     Paid by: {expense.paidBy?.name || "Unknown"}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  className="text-blue-600 text-sm"
-                  onClick={() =>
-                    navigate(
-                      `/groups/${groupId}/events/${eventId}/edit-expense/${expense._id}`
-                    )
-                  }
-                >
-                  Edit
-                </button>
-                <button
-                  className="text-red-600 text-sm"
-                  onClick={() => handleDelete(expense._id)}
-                >
-                  Delete
-                </button>
+
+              <div className="flex items-center gap-6">
+                <span className="text-right font-bold text-lg text-green-700">
+                  ${expense.amount.toFixed(2)}
+                </span>
+                <div className="flex items-center gap-3">
+                  <PencilLine
+                    className="w-5 h-5 text-gray-500 hover:text-blue-600 cursor-pointer"
+                    onClick={() =>
+                      navigate(
+                        `/groups/${groupId}/events/${eventId}/edit-expense/${expense._id}`
+                      )
+                    }
+                  />
+                  <Trash2
+                    className="w-5 h-5 text-red-500 hover:text-red-700 cursor-pointer"
+                    onClick={() => handleDelete(expense._id)}
+                  />
+                </div>
               </div>
-              <span className="text-right font-bold">
-                ${expense.amount.toFixed(2)}
-              </span>
             </li>
           ))}
         </ul>

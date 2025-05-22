@@ -14,6 +14,7 @@ import GroupInfoPage from "./pages/GroupInfoPage";
 import EditGroupPage from "./pages/EditGroupPage";
 import EventInfoPage from "./pages/EventInfoPage";
 import EditExpensePage from "./pages/EditExpensePage";
+import EditEventPage from "./pages/EditEventPage";
 
 function App() {
   return (
@@ -139,6 +140,17 @@ function App() {
               <>
                 <Header />
                 <EditExpensePage />
+              </>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/groups/:groupId/events/:eventId/edit"
+          element={
+            <ProtectedRoute>
+              <>
+                <Header />
+                <EditEventPage />
               </>
             </ProtectedRoute>
           }

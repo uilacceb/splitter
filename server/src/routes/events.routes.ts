@@ -41,4 +41,41 @@ eventRouter.post("/", async (req, res) => {
   }
 });
 
+// PUT: Edit event
+eventRouter.put("/:id", async (req: any, res: any) => {
+  const { title, date, participants } = req.body;
+  try {
+    const updatedEvent = await Event.findByIdAndUpdate(
+      req.params.id,
+      {
+        ...(title && { title }),
+        ...(date && { date }),
+        ...(participants && { participants }),
+      },
+      { new: true }
+    );
+    if (!updatedEvent) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+    res.json(updatedEvent);
+  } catch (err) {
+    console.error("Failed to update event:", err);
+    res.status(500).json({ message: "Failed to update event" });
+  }
+});
+
+// DELETE: Delete event
+eventRouter.delete("/:id", async (req: any, res: any) => {
+  try {
+    const deletedEvent = await Event.findByIdAndDelete(req.params.id);
+    if (!deletedEvent) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+    res.json({ message: "Event deleted successfully" });
+  } catch (err) {
+    console.error("Failed to delete event:", err);
+    res.status(500).json({ message: "Failed to delete event" });
+  }
+});
+
 export default eventRouter;

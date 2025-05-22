@@ -17,7 +17,7 @@ const GroupList = ({ groups }: { groups: Group[] }) => {
         {groups.map((group) => (
           <div
             key={group._id}
-            className="text-sm text-gray-700 flex items-center cursor-pointer mb-3 w-[80%]"
+            className="text-sm text-gray-700 flex items-center cursor-pointer pb-3 w-[80%]"
             onClick={() => navigate(`/groups/${group._id}`)}
           >
             <img
