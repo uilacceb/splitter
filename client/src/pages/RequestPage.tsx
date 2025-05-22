@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Check, X } from "lucide-react";
 import { useRequestCounts } from "../context/RequestContext"; // adjust path as needed
+import GoBack from "../components/GoBack";
 
 type Request = {
   _id: string;
@@ -96,8 +97,9 @@ const Requests = () => {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-semibold mb-4">Friend Requests</h2>
+    <div className="p-4 relative">
+      <GoBack />
+      <h2 className="text-xl font-semibold mb-4 mt-8">Friend Requests</h2>
       {friendRequests.length > 0 ? (
         <ul className="space-y-2">
           {friendRequests.map((req) => (
