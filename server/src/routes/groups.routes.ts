@@ -163,4 +163,26 @@ groupRouter.put("/:id/members/remove", async (req, res) => {
   }
 });
 
+// DELETE: Delete a group
+groupRouter.delete("/:id", async (req: any, res: any) => {
+  const groupId = req.params.id;
+
+  try {
+    // Delete all associated pending group requests
+    await GroupRequest.deleteMany({ groupId });
+
+    // Delete the group itself
+    const deletedGroup = await Group.findByIdAndDelete(groupId);
+
+    if (!deletedGroup) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+
+    res.json({ message: "Group deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting group:", err);
+    res.status(500).json({ message: "Failed to delete group" });
+  }
+});
+
 export default groupRouter;

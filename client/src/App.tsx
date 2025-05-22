@@ -15,6 +15,7 @@ import EditGroupPage from "./pages/EditGroupPage";
 import EventInfoPage from "./pages/EventInfoPage";
 import EditExpensePage from "./pages/EditExpensePage";
 import EditEventPage from "./pages/EditEventPage";
+import ExpenseInfoPage from "./pages/ExpenseInfoPage";
 
 function App() {
   return (
@@ -155,7 +156,17 @@ function App() {
             </ProtectedRoute>
           }
         />
-
+        <Route
+          path="/groups/:groupId/events/:eventId/expenses/:expenseId"
+          element={
+            <ProtectedRoute>
+              <>
+                <Header />
+                <ExpenseInfoPage />
+              </>
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/account"
           element={

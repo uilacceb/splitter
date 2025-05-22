@@ -164,14 +164,30 @@ const EditGroupPage = () => {
     setRandomIcon(groupIcons[index]);
   };
 
+  const handleDeleteGroup = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this group?"
+    );
+    if (!confirmed) return;
+
+    try {
+      await axios.delete(`/api/groups/${groupId}`);
+      alert("Group deleted successfully");
+      navigate("/groups");
+    } catch (err) {
+      console.error("Failed to delete group", err);
+      setError("Failed to delete group. Please try again.");
+    }
+  };
+
   return (
     <form
-      className="m-4 flex flex-col space-y-4 p-4 gap-8 relative"
+      className="m-4 flex flex-col space-y-4 p-4  relative"
       onSubmit={handleUpdateGroup}
     >
       <GoBack />
       <div className="flex flex-col">
-        <label className="text-2xl font-semibold pb-2">Group Title</label>
+        <label className="text-2xl font-semibold pt-3 pb-2">Group Title</label>
         <input
           type="text"
           className="border-2 border-gray-300 p-2 w-[70%]"
@@ -245,7 +261,7 @@ const EditGroupPage = () => {
               {group?.createdBy._id === currentUser._id && (
                 <button
                   type="button"
-                  className="bg-red-500 text-white ml-auto p-1 rounded cursor-pointer"
+                  className=" text-red-500 ml-auto p-1 rounded cursor-pointer"
                   onClick={() => removeFriendFromGroup(friend)}
                 >
                   remove
@@ -306,13 +322,21 @@ const EditGroupPage = () => {
       )}
 
       {error && <span className="text-red-500 mt-1 text-2xl">{error}</span>}
-
-      <button
-        type="submit"
-        className="bg-[#2F5A62] text-white p-2 rounded text-xl"
-      >
-        Update
-      </button>
+      <div className="flex flex-col gap-2 pt-4">
+        <button
+          type="submit"
+          className="bg-[#2F5A62] text-white p-2 rounded text-xl"
+        >
+          Update
+        </button>
+        <button
+          type="button"
+          onClick={handleDeleteGroup}
+          className="bg-[#e03535] text-white p-2 rounded text-xl"
+        >
+          Delete Group
+        </button>
+      </div>
     </form>
   );
 };
