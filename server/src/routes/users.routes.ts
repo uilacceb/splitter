@@ -54,6 +54,20 @@ userRouter.get("/friends", async (req: any, res: any) => {
   }
 });
 
+// GET: Get a single user by ID (for FriendInfoPage)
+userRouter.get("/:id", async (req: any, res: any) => {
+  try {
+    const user = await User.findById(req.params.id).select(
+      "name email picture"
+    );
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json(user);
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    res.status(500).json({ message: "Failed to fetch user" });
+  }
+});
+
 userRouter.get("/search", async (req: any, res: any) => {
   try {
     const query = req.query.query?.toString().trim();
@@ -191,5 +205,27 @@ userRouter.delete(
     }
   }
 );
+
+// DELETE: Remove a friend from both users' friendList
+userRouter.delete("/friends/:id", async (req: any, res: any) => {
+  const { userId } = req.query; // ID of the user initiating the removal
+  const friendId = req.params.id;
+
+  if (!userId) {
+    return res.status(400).json({ message: "Missing userId query param" });
+  }
+
+  try {
+    await Promise.all([
+      User.findByIdAndUpdate(userId, { $pull: { friendList: friendId } }),
+      User.findByIdAndUpdate(friendId, { $pull: { friendList: userId } }),
+    ]);
+
+    res.json({ message: "Friend removed successfully" });
+  } catch (error) {
+    console.error("Error removing friend:", error);
+    res.status(500).json({ message: "Failed to remove friend" });
+  }
+});
 
 export default userRouter;

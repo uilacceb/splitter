@@ -16,6 +16,7 @@ import EventInfoPage from "./pages/EventInfoPage";
 import EditExpensePage from "./pages/EditExpensePage";
 import EditEventPage from "./pages/EditEventPage";
 import ExpenseInfoPage from "./pages/ExpenseInfoPage";
+import FriendInfoPage from "./pages/FriendInfoPage";
 
 function App() {
   return (
@@ -62,6 +63,17 @@ function App() {
               <>
                 <Header />
                 <Requests />
+              </>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/friends/:friendId"
+          element={
+            <ProtectedRoute>
+              <>
+                <Header />
+                <FriendInfoPage />
               </>
             </ProtectedRoute>
           }

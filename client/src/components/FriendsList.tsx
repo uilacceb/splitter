@@ -13,6 +13,7 @@ type Friend = {
 const FriendsList = () => {
   const [friends, setFriends] = useState<Friend[]>([]);
   const { counts } = useRequestCounts();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -29,11 +30,11 @@ const FriendsList = () => {
 
     fetchFriends();
   }, []);
-  const navigate = useNavigate();
+
   return (
     <div className="pl-10">
       <div className="relative w-[80%] ">
-        <h2 onClick={() => navigate("/requests")}>
+        <h2 onClick={() => navigate("/requests")} className="cursor-pointer">
           Friends ({friends.length})
         </h2>
         {counts.friend > 0 && (
@@ -42,8 +43,12 @@ const FriendsList = () => {
       </div>
 
       <div className="mt-2 space-y-1">
-        {friends?.map((friend) => (
-          <div key={friend._id} className="text-sm text-gray-700 pb-2 pt-1">
+        {friends.map((friend) => (
+          <div
+            key={friend._id}
+            className="text-sm text-gray-700 pb-2 pt-1 cursor-pointer hover:bg-gray-100 rounded px-2"
+            onClick={() => navigate(`/friends/${friend._id}`)}
+          >
             <img
               src={friend.picture}
               alt={friend.name}
