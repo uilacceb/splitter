@@ -5,8 +5,8 @@ import AddFriend from "../components/AddFriend";
 const FriendsPage = () => {
   return (
     <>
-      <AddFriend />
       <AllClear />
+      <AddFriend />
       <FriendsList />
     </>
   );

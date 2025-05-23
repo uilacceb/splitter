@@ -3,7 +3,7 @@ import { useRequestCounts } from "../context/RequestContext";
 
 const Header = () => {
   const navigate = useNavigate();
-  const { counts, refreshCounts } = useRequestCounts();
+  const { counts } = useRequestCounts();
 
   return (
     <div className="flex justify-evenly items-center bg-[#39625C] text-white p-6 text-xl">
