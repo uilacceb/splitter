@@ -23,6 +23,7 @@ const EventInfoPage = () => {
   }>();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [eventTitle, setEventTitle] = useState("");
+
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
@@ -78,9 +79,15 @@ const EventInfoPage = () => {
           Add Expense
         </button>
       </div>
-
-      <h2 className="text-2xl font-semibold mb-6">{eventTitle}</h2>
-
+      <div className="flex items-center mb-6 gap-2">
+        <h2 className="text-3xl font-semibold ">{eventTitle}</h2>
+        <PencilLine
+          color="#6b7280"
+          className="w-6 h-6 cursor-pointer"
+          onClick={() => navigate(`/groups/${groupId}/events/${eventId}/edit`)}
+        />
+      </div>
+      <h2>Expenses ({expenses.length}):</h2>
       {expenses.length === 0 ? (
         <p>No expenses recorded for this event.</p>
       ) : (
@@ -107,7 +114,12 @@ const EventInfoPage = () => {
                 <div>
                   <p className="font-semibold text-lg">{expense.description}</p>
                   <p className="text-sm text-gray-600">
-                    Paid by: {expense.paidBy?.name || "Unknown"}
+                    Paid by:{" "}
+                    {expense.paidBy?.name
+                      ? `${expense.paidBy.name.split(" ")[0]} ${
+                          expense.paidBy.name.split(" ")[1]?.charAt(0) || ""
+                        }.`
+                      : "Unknown"}
                   </p>
                 </div>
               </div>

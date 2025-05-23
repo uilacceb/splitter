@@ -123,7 +123,9 @@ const GroupInfoPage = () => {
         ))}
       </ul>
 
-      <h3 className="text-lg font-medium mt-8 mb-2">Events:</h3>
+      <h3 className="text-lg font-medium mt-8 mb-2">
+        Events ({events.length}):
+      </h3>
       {events.length === 0 ? (
         <p className="text-gray-600">No events yet.</p>
       ) : (
@@ -147,13 +149,13 @@ const GroupInfoPage = () => {
                 </div>
               </div>
               <div className="flex gap-3 ml-4">
-                <PencilLine
+                {/* <PencilLine
                   color="#6b7280"
                   className="w-5 h-5 cursor-pointer"
                   onClick={() =>
                     navigate(`/groups/${group._id}/events/${event._id}/edit`)
                   }
-                />
+                /> */}
                 <Trash2
                   color="#ef4444"
                   className="w-5 h-5 cursor-pointer"
