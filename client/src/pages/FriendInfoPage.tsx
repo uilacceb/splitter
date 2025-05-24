@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import GoBack from "../components/GoBack";
+import { useRequestCounts } from "../context/RequestContext";
 
 type Friend = {
   _id: string;
@@ -13,22 +14,34 @@ type Friend = {
 const FriendInfoPage = () => {
   const { friendId } = useParams<{ friendId: string }>();
   const [friend, setFriend] = useState<Friend | null>(null);
+  const [isFriend, setIsFriend] = useState(false);
+  const [sentRequests, setSentRequests] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const { counts, refreshCounts } = useRequestCounts();
   const navigate = useNavigate();
+
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
   const currentUserId = currentUser._id;
 
   useEffect(() => {
-    const fetchFriend = async () => {
+    const fetchFriendData = async () => {
       try {
         const res = await axios.get(`/api/users/${friendId}`);
         setFriend(res.data);
+
+        const friendRes = await axios.get(
+          `/api/users/friends?userId=${currentUserId}`
+        );
+        const friendList: Friend[] = friendRes.data;
+        const isAlreadyFriend = friendList.some((f) => f._id === friendId);
+        setIsFriend(isAlreadyFriend);
       } catch (err) {
-        console.error("Failed to fetch user", err);
+        console.error("Failed to fetch friend data", err);
       }
     };
 
-    fetchFriend();
-  }, [friendId]);
+    fetchFriendData();
+  }, [friendId, currentUserId]);
 
   const handleDelete = async () => {
     const confirmed = window.confirm(
@@ -41,14 +54,33 @@ const FriendInfoPage = () => {
         `/api/users/friends/${friendId}?userId=${currentUserId}`
       );
       alert("Friend deleted");
-      navigate("/friends"); // Adjust route if needed
+      navigate("/friends");
     } catch (err) {
       console.error("Failed to delete friend", err);
       alert("Failed to delete friend");
     }
   };
 
+  const sendFriendRequest = async () => {
+    setError(null);
+    try {
+      await axios.post(`/api/users/friends/request`, {
+        to: friendId,
+        from: currentUserId,
+      });
+      setSentRequests((prev) => [...prev, friendId!]);
+      refreshCounts();
+    } catch (err: any) {
+      const msg =
+        err.response?.data?.message || "Failed to send friend request";
+      setError(msg);
+      setTimeout(() => setError(null), 3000);
+    }
+  };
+
   if (!friend) return <p className="p-4">Loading...</p>;
+
+  const hasSentRequest = sentRequests.includes(friendId!);
 
   return (
     <div className="p-4 relative">
@@ -61,13 +93,34 @@ const FriendInfoPage = () => {
         />
         <h2 className="text-xl font-semibold">{friend.name}</h2>
         <p className="text-gray-600">{friend.email}</p>
+
+        {error && <p className="text-red-500 mt-2">{error}</p>}
+
         {friendId !== currentUserId && (
-          <button
-            className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
-            onClick={handleDelete}
-          >
-            Delete Friend
-          </button>
+          <>
+            {isFriend ? (
+              <button
+                className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
+                onClick={handleDelete}
+              >
+                Delete Friend
+              </button>
+            ) : hasSentRequest ? (
+              <button
+                className="mt-4 bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed"
+                disabled
+              >
+                Request Sent
+              </button>
+            ) : (
+              <button
+                className="mt-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                onClick={sendFriendRequest}
+              >
+                Add Friend
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>
