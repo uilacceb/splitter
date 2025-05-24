@@ -8,6 +8,7 @@ type User = {
   _id: string; // MongoDB usually uses _id
   name: string;
   email: string;
+  picture: string;
 };
 
 const AddFriendsPage = () => {
@@ -98,6 +99,11 @@ const AddFriendsPage = () => {
               key={user._id}
               className="flex items-center border p-2 rounded bg-gray-100"
             >
+              <img
+                src={user.picture}
+                className="w-10 rounded-md mr-2"
+                alt="user profile pic"
+              />
               <div>
                 <strong>{user.name}</strong> — {user.email}
               </div>

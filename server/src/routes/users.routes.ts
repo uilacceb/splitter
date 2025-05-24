@@ -54,19 +54,6 @@ userRouter.get("/friends", async (req: any, res: any) => {
   }
 });
 
-// GET: Get a single user by ID (for FriendInfoPage)
-userRouter.get("/:id", async (req: any, res: any) => {
-  try {
-    const user = await User.findById(req.params.id).select(
-      "name email picture"
-    );
-    if (!user) return res.status(404).json({ message: "User not found" });
-    res.json(user);
-  } catch (err) {
-    console.error("Error fetching user:", err);
-    res.status(500).json({ message: "Failed to fetch user" });
-  }
-});
 
 userRouter.get("/search", async (req: any, res: any) => {
   try {
@@ -83,6 +70,20 @@ userRouter.get("/search", async (req: any, res: any) => {
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch users", error });
+  }
+});
+
+// GET: Get a single user by ID (for FriendInfoPage)
+userRouter.get("/:id", async (req: any, res: any) => {
+  try {
+    const user = await User.findById(req.params.id).select(
+      "name email picture"
+    );
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json(user);
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    res.status(500).json({ message: "Failed to fetch user" });
   }
 });
 
