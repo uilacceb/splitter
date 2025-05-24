@@ -109,7 +109,7 @@ const GroupInfoPage = () => {
           <li
             key={member._id}
             className="flex items-center border p-2 rounded bg-gray-50 cursor-pointer"
-            onClick={() => navigate(`/users/${member._id}`)}
+            onClick={() => navigate(`/friends/${member._id}`)}
           >
             <img
               src={member.picture}

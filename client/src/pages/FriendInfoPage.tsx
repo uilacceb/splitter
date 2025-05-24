@@ -61,13 +61,14 @@ const FriendInfoPage = () => {
         />
         <h2 className="text-xl font-semibold">{friend.name}</h2>
         <p className="text-gray-600">{friend.email}</p>
-
-        <button
-          className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
-          onClick={handleDelete}
-        >
-          Delete Friend
-        </button>
+        {friendId !== currentUserId && (
+          <button
+            className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
+            onClick={handleDelete}
+          >
+            Delete Friend
+          </button>
+        )}
       </div>
     </div>
   );
