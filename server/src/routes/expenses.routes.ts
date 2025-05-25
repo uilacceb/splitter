@@ -8,10 +8,9 @@ expenseRouter.get("/", async (req, res) => {
   const { eventId } = req.query;
 
   try {
-    const expenses = await Expense.find({ eventId }).populate(
-      "paidBy",
-      "name picture"
-    ); // ← this is critical
+    const expenses = await Expense.find({ eventId })
+      .populate("paidBy", "name picture")
+      .populate("splitWith", "name picture _id");
 
     res.json(expenses);
   } catch (err) {
@@ -85,7 +84,5 @@ expenseRouter.put("/:id", async (req: any, res: any) => {
     res.status(500).json({ message: "Failed to update expense" });
   }
 });
-
-
 
 export default expenseRouter;

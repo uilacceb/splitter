@@ -4,16 +4,25 @@ import axios from "axios";
 import GoBack from "../components/GoBack";
 import { PencilLine, Trash2 } from "lucide-react";
 
+type User = {
+  _id: string;
+  name: string;
+  picture: string;
+};
+
 type Expense = {
   _id: string;
   description: string;
   amount: number;
-  paidBy: {
-    _id: string;
-    name: string;
-    picture: string;
-  };
+  paidBy: User;
+  splitWith: User[];
   createdAt: string;
+};
+
+type Transaction = {
+  from: string;
+  to: string;
+  amount: number;
 };
 
 const EventInfoPage = () => {
@@ -23,15 +32,16 @@ const EventInfoPage = () => {
   }>();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [eventTitle, setEventTitle] = useState("");
-
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [userMap, setUserMap] = useState<Record<string, User>>({});
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
-        const eventRes = await axios.get(`/api/events/${eventId}`);
-        setEventTitle(eventRes.data.title);
+        const res = await axios.get(`/api/events/${eventId}`);
+        setEventTitle(res.data.title);
       } catch (error) {
         console.error("Failed to fetch event title", error);
       }
@@ -41,6 +51,7 @@ const EventInfoPage = () => {
       try {
         const res = await axios.get(`/api/expenses?eventId=${eventId}`);
         setExpenses(res.data);
+        generateTransactions(res.data);
       } catch (error) {
         console.error("Failed to fetch expenses", error);
       }
@@ -49,6 +60,36 @@ const EventInfoPage = () => {
     fetchEventDetails();
     fetchExpenses();
   }, [eventId]);
+
+  const generateTransactions = (expenses: Expense[]) => {
+    const txs: Transaction[] = [];
+    const userMapTemp: Record<string, User> = {};
+
+    expenses.forEach((expense) => {
+      const payer = expense.paidBy;
+      const splitAmount = expense.amount / expense.splitWith.length;
+
+      userMapTemp[payer._id] = payer;
+
+      expense.splitWith.forEach((user) => {
+        userMapTemp[user._id] = user;
+
+        if (user._id !== payer._id) {
+          txs.push({
+            from: user._id,
+            to: payer._id,
+            amount: splitAmount,
+          });
+        }
+      });
+    });
+
+    setUserMap(userMapTemp);
+    setTransactions(txs);
+  };
+
+  const getTotalAmount = () =>
+    expenses.reduce((sum, e) => sum + e.amount, 0).toFixed(2);
 
   const handleDelete = async (expenseId: string) => {
     const confirmed = window.confirm(
@@ -68,10 +109,10 @@ const EventInfoPage = () => {
   return (
     <div className="p-4 relative">
       <GoBack />
+
       <div className="flex justify-end mb-4">
         <button
-          className="flex items-center gap-2 px-4 py-2 bg-[#39625C] text-white rounded hover:bg-[#83A99B] transition duration-300"
-          type="button"
+          className="flex items-center gap-2 px-4 py-2 bg-[#39625C] text-white rounded hover:bg-[#83A99B]"
           onClick={() =>
             navigate(`/groups/${groupId}/events/${eventId}/add-expense`)
           }
@@ -79,15 +120,64 @@ const EventInfoPage = () => {
           Add Expense
         </button>
       </div>
-      <div className="flex items-center mb-6 gap-2">
-        <h2 className="text-3xl font-semibold ">{eventTitle}</h2>
+
+      <div className="flex items-center gap-2 mb-6">
+        <h2 className="text-3xl font-semibold">{eventTitle}</h2>
         <PencilLine
-          color="#6b7280"
-          className="w-6 h-6 cursor-pointer"
+          className="text-gray-500 cursor-pointer"
           onClick={() => navigate(`/groups/${groupId}/events/${eventId}/edit`)}
         />
       </div>
-      <h2>Expenses ({expenses.length}):</h2>
+
+      <div className="text-xl font-medium mb-4 text-green-700">
+        Total Expenses: ${getTotalAmount()}
+      </div>
+
+      <div className="mb-8">
+        <h3 className="text-lg font-semibold mb-2">Who owes whom:</h3>
+        {transactions.length === 0 ? (
+          <p>No transactions yet.</p>
+        ) : (
+          <ul className="space-y-3">
+            {transactions.map((tx, idx) => (
+              <li
+                key={idx}
+                className="bg-gray-100 p-3 rounded shadow-sm grid grid-cols-[auto_1fr_auto_1fr_auto] items-center gap-3"
+              >
+                <img
+                  src={userMap[tx.from]?.picture}
+                  alt="from"
+                  className="w-8 h-8 rounded-full"
+                />
+                <span className="text-red-600 font-semibold truncate">
+                  {userMap[tx.from]?.name.split(" ")[0] || "Unknown"}
+                </span>
+
+                <span className="text-sm text-gray-700 text-center">owes</span>
+
+                <div className="flex items-center gap-2">
+                  <img
+                    src={userMap[tx.to]?.picture}
+                    alt="to"
+                    className="w-8 h-8 rounded-full"
+                  />
+                  <span className="text-green-700 font-semibold truncate">
+                    {userMap[tx.to]?.name.split(" ")[0] || "Unknown"}
+                  </span>
+                </div>
+
+                <span className="text-sm font-medium text-right">
+                  ${tx.amount.toFixed(2)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <h2 className="text-xl font-medium mb-2">
+        Expenses ({expenses.length}):
+      </h2>
       {expenses.length === 0 ? (
         <p>No expenses recorded for this event.</p>
       ) : (
@@ -95,11 +185,10 @@ const EventInfoPage = () => {
           {expenses.map((expense) => (
             <li
               key={expense._id}
-              className="border rounded p-4 bg-gray-100 flex items-center justify-between shadow-sm"
+              className="border rounded p-4 bg-gray-50 shadow-sm flex justify-between items-center"
             >
-              {/* Clickable area */}
               <div
-                className="flex items-center cursor-pointer flex-1"
+                className="flex items-center gap-4 cursor-pointer"
                 onClick={() =>
                   navigate(
                     `/groups/${groupId}/events/${eventId}/expenses/${expense._id}`
@@ -108,32 +197,25 @@ const EventInfoPage = () => {
               >
                 <img
                   src={expense.paidBy?.picture}
-                  alt={expense.paidBy?.name || "User"}
-                  className="w-10 h-10 rounded-full mr-3"
+                  alt="payer"
+                  className="w-10 h-10 rounded-full"
                 />
                 <div>
-                  <p className="font-semibold text-lg">{expense.description}</p>
+                  <p className="text-lg font-semibold">{expense.description}</p>
                   <p className="text-sm text-gray-600">
-                    Paid by:{" "}
-                    {expense.paidBy?.name
-                      ? `${expense.paidBy.name.split(" ")[0]} ${
-                          expense.paidBy.name.split(" ")[1]?.charAt(0) || ""
-                        }.`
-                      : "Unknown"}
+                    Paid by {expense.paidBy.name}
                   </p>
                 </div>
               </div>
 
-              {/* Actions */}
-              <div className="flex items-center gap-6 ml-4">
-                <span className="text-right font-bold text-lg text-green-700">
+              <div className="flex items-center gap-4">
+                <span className="font-bold text-green-700 text-lg">
                   ${expense.amount.toFixed(2)}
                 </span>
-
                 {expense.paidBy._id === currentUser._id && (
-                  <div className="flex items-center gap-3">
+                  <div className="flex gap-2">
                     <PencilLine
-                      className="w-5 h-5 text-gray-500 hover:text-blue-600 cursor-pointer"
+                      className="text-gray-500 hover:text-blue-600 cursor-pointer"
                       onClick={() =>
                         navigate(
                           `/groups/${groupId}/events/${eventId}/edit-expense/${expense._id}`
@@ -141,7 +223,7 @@ const EventInfoPage = () => {
                       }
                     />
                     <Trash2
-                      className="w-5 h-5 text-red-500 hover:text-red-700 cursor-pointer"
+                      className="text-red-500 hover:text-red-700 cursor-pointer"
                       onClick={() => handleDelete(expense._id)}
                     />
                   </div>
