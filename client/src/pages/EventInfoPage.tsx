@@ -62,7 +62,7 @@ const EventInfoPage = () => {
   }, [eventId]);
 
   const generateTransactions = (expenses: Expense[]) => {
-    const txs: Transaction[] = [];
+    const rawTxs: Transaction[] = [];
     const userMapTemp: Record<string, User> = {};
 
     expenses.forEach((expense) => {
@@ -75,7 +75,7 @@ const EventInfoPage = () => {
         userMapTemp[user._id] = user;
 
         if (user._id !== payer._id) {
-          txs.push({
+          rawTxs.push({
             from: user._id,
             to: payer._id,
             amount: splitAmount,
@@ -84,8 +84,22 @@ const EventInfoPage = () => {
       });
     });
 
+    // Combine transactions with same from-to pair
+    const combinedMap: Record<string, Transaction> = {};
+
+    rawTxs.forEach((tx) => {
+      const key = `${tx.from}->${tx.to}`;
+      if (!combinedMap[key]) {
+        combinedMap[key] = { ...tx };
+      } else {
+        combinedMap[key].amount += tx.amount;
+      }
+    });
+
+    const combinedTxs = Object.values(combinedMap);
+
     setUserMap(userMapTemp);
-    setTransactions(txs);
+    setTransactions(combinedTxs);
   };
 
   const getTotalAmount = () =>
