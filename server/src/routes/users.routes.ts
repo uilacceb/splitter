@@ -2,6 +2,7 @@ import express from "express";
 import User from "../models/User";
 import FriendRequest from "../models/FriendRequest";
 import mongoose from "mongoose";
+import Expense from "../models/Expense";
 
 const userRouter = express.Router();
 
@@ -53,7 +54,6 @@ userRouter.get("/friends", async (req: any, res: any) => {
       .json({ message: "Failed to fetch friend list", error: error.message });
   }
 });
-
 
 userRouter.get("/search", async (req: any, res: any) => {
   try {
@@ -184,6 +184,74 @@ userRouter.put(
     }
   }
 );
+
+userRouter.get("/friends/summary", async (req: any, res: any) => {
+  const { userId } = req.query;
+  if (!userId) return res.status(400).json({ message: "userId is required" });
+
+  try {
+    const expenses = await Expense.find({
+      $or: [{ paidBy: userId }, { splitWith: userId }],
+    })
+      .populate("paidBy", "_id name picture")
+      .populate("splitWith", "_id name picture");
+
+    const summaryMap: Record<
+      string,
+      { name: string; picture: string; amount: number }
+    > = {};
+
+    for (const expense of expenses) {
+      const payer = expense.paidBy as any;
+      const splitAmount = expense.amount / expense.splitWith.length;
+
+      for (const user of expense.splitWith) {
+        const participant = user as any;
+        if (participant._id.toString() === payer._id.toString()) continue;
+
+        const participantId = participant._id.toString();
+        const payerId = payer._id.toString();
+
+        // Case 1: current user is payer → others owe me
+        if (payerId === userId) {
+          if (!summaryMap[participantId]) {
+            summaryMap[participantId] = {
+              name: participant.name,
+              picture: participant.picture,
+              amount: 0,
+            };
+          }
+          summaryMap[participantId].amount += splitAmount;
+        }
+
+        // Case 2: current user is a participant → I owe the payer
+        if (participantId === userId) {
+          if (!summaryMap[payerId]) {
+            summaryMap[payerId] = {
+              name: payer.name,
+              picture: payer.picture,
+              amount: 0,
+            };
+          }
+          summaryMap[payerId].amount -= splitAmount;
+        }
+      }
+    }
+
+    const result = Object.entries(summaryMap)
+      .map(([id, data]) => ({
+        id,
+        ...data,
+        amount: parseFloat(data.amount.toFixed(2)),
+      }))
+      .filter((entry) => Math.abs(entry.amount) > 0.01); // Ignore near-zero
+
+    res.json(result);
+  } catch (error) {
+    console.error("Error calculating summary:", error);
+    res.status(500).json({ message: "Failed to get friend summary" });
+  }
+});
 
 // DELETE /api/users/friends/requests/:requestId
 userRouter.delete(
