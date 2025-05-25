@@ -134,7 +134,7 @@ const EventInfoPage = () => {
       </div>
 
       <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-2">Who owes whom:</h3>
+        <h3 className="text-lg font-semibold mb-2">Transaction:</h3>
         {transactions.length === 0 ? (
           <p>No transactions yet.</p>
         ) : (
@@ -142,18 +142,21 @@ const EventInfoPage = () => {
             {transactions.map((tx, idx) => (
               <li
                 key={idx}
-                className="bg-gray-100 p-3 rounded shadow-sm grid grid-cols-[auto_1fr_auto_1fr_auto] items-center gap-3"
+                className="bg-gray-100 p-3 rounded shadow-sm grid grid-cols-[1fr_auto_1fr_auto] items-center gap-4"
               >
-                <img
-                  src={userMap[tx.from]?.picture}
-                  alt="from"
-                  className="w-8 h-8 rounded-full"
-                />
-                <span className="text-red-600 font-semibold truncate">
-                  {userMap[tx.from]?.name.split(" ")[0] || "Unknown"}
+                <div className="flex items-center gap-2">
+                  <img
+                    src={userMap[tx.from]?.picture}
+                    alt="from"
+                    className="w-8 h-8 rounded-full"
+                  />
+                  <span className="font-semibold truncate">
+                    {userMap[tx.from]?.name.split(" ")[0] || "Unknown"}
+                  </span>
+                </div>
+                <span className="text-md text-center text-red-500 font-semibold">
+                  owes
                 </span>
-
-                <span className="text-sm text-gray-700 text-center">owes</span>
 
                 <div className="flex items-center gap-2">
                   <img
@@ -161,12 +164,12 @@ const EventInfoPage = () => {
                     alt="to"
                     className="w-8 h-8 rounded-full"
                   />
-                  <span className="text-green-700 font-semibold truncate">
+                  <span className=" font-semibold truncate">
                     {userMap[tx.to]?.name.split(" ")[0] || "Unknown"}
                   </span>
                 </div>
 
-                <span className="text-sm font-medium text-right">
+                <span className="text-md text-green-800 text-right font-semibold">
                   ${tx.amount.toFixed(2)}
                 </span>
               </li>
