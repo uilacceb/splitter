@@ -67,4 +67,27 @@ describe("calculateNetTransactions", () => {
       { from: "S", to: "A", amount: 98.6 },
     ]);
   });
+  it("should handle multiple user pairs and offset appropriately 3", () => {
+    const input: Transaction[] = [
+      { from: "Z", to: "A", amount: 25 },
+      { from: "J", to: "A", amount: 25 },
+      { from: "R", to: "Z", amount: 50 },
+      { from: "A", to: "Z", amount: 50 },
+      { from: "J", to: "Z", amount: 50 },
+    ];
+
+    const result = calculateNetTransactions(input);
+    expect(
+      result.sort(
+        (a, b) => a.from.localeCompare(b.from) || a.to.localeCompare(b.to)
+      )
+    ).toEqual(
+      [
+        { from: "A", to: "Z", amount: 25 },
+        { from: "J", to: "A", amount: 25 },
+        { from: "J", to: "Z", amount: 50 },
+        { from: "R", to: "Z", amount: 50 },
+      ].sort((a, b) => a.from.localeCompare(b.from) || a.to.localeCompare(b.to))
+    );
+  });
 });

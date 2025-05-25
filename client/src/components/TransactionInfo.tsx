@@ -13,24 +13,29 @@ type Props = {
 
 const TransactionInfo = ({ transactions }: Props) => {
   const total = transactions.reduce((acc, t) => acc + t.amount, 0).toFixed(2);
-  const type = transactions[0]?.type;
 
   return (
-    <div className="p-4 bg-white shadow-md rounded-md">
-      <h2 className="text-lg font-semibold mb-4">
-        {type === "owe" ? (
+    <div className="p-5 bg-white rounded-md pb-8">
+      <h2 className="text-lg font-semibold mb-4">Transactions Summary:</h2>
+      {/* <h2 className="text-lg font-semibold mb-4">
+        {parseFloat(total) < 0 ? (
           <>
-            You owe <span className="text-red-600 font-bold">${total}</span> in
-            total
+            You owe{" "}
+            <span className="text-red-600 font-bold">
+              ${Math.abs(parseFloat(total)).toFixed(2)}
+            </span>{" "}
+            in total
           </>
         ) : (
           <>
             You are expecting{" "}
-            <span className="text-blue-600 font-bold">${total}</span> in total
-            from
+            <span className="text-blue-600 font-bold">
+              ${Math.abs(parseFloat(total)).toFixed(2)}
+            </span>{" "}
+            in total 
           </>
         )}
-      </h2>
+      </h2> */}
 
       <ul className="space-y-4">
         {transactions.map((tx, idx) => (
@@ -48,14 +53,14 @@ const TransactionInfo = ({ transactions }: Props) => {
             </div>
             <div className="text-right">
               <p className="text-sm text-gray-600">
-                {type === "owe" ? "you owe" : "owes you"}
+                {tx.amount < 0 ? "you owe" : "owes you"}
               </p>
               <p
                 className={`font-semibold ${
-                  type === "owe" ? "text-red-600" : "text-blue-600"
+                  tx.amount < 0 ? "text-red-600" : "text-blue-600"
                 }`}
               >
-                ${tx.amount.toFixed(2)}
+                ${Math.abs(tx.amount).toFixed(2)}
               </p>
             </div>
           </li>
