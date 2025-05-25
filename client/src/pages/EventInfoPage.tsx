@@ -65,15 +65,14 @@ const EventInfoPage = () => {
     const rawTxs: Transaction[] = [];
     const userMapTemp: Record<string, User> = {};
 
+    // Step 1: Collect all transactions and user info
     expenses.forEach((expense) => {
       const payer = expense.paidBy;
       const splitAmount = expense.amount / expense.splitWith.length;
-
       userMapTemp[payer._id] = payer;
 
       expense.splitWith.forEach((user) => {
         userMapTemp[user._id] = user;
-
         if (user._id !== payer._id) {
           rawTxs.push({
             from: user._id,
@@ -84,22 +83,38 @@ const EventInfoPage = () => {
       });
     });
 
-    // Combine transactions with same from-to pair
-    const combinedMap: Record<string, Transaction> = {};
-
-    rawTxs.forEach((tx) => {
-      const key = `${tx.from}->${tx.to}`;
-      if (!combinedMap[key]) {
-        combinedMap[key] = { ...tx };
-      } else {
-        combinedMap[key].amount += tx.amount;
-      }
+    // Step 2: Combine all transactions between same pairs (from → to)
+    const combinedMap: Record<string, number> = {};
+    rawTxs.forEach(({ from, to, amount }) => {
+      const key = `${from}->${to}`;
+      combinedMap[key] = (combinedMap[key] || 0) + amount;
     });
 
-    const combinedTxs = Object.values(combinedMap);
+    // Step 3: Offset mutual debts
+    const finalTxs: Transaction[] = [];
+    const seen = new Set();
+
+    Object.entries(combinedMap).forEach(([key, amount]) => {
+      if (seen.has(key)) return;
+
+      const [from, to] = key.split("->");
+      const reverseKey = `${to}->${from}`;
+
+      const forward = amount;
+      const backward = combinedMap[reverseKey] || 0;
+
+      if (forward > backward) {
+        finalTxs.push({ from, to, amount: forward - backward });
+      } else if (backward > forward) {
+        finalTxs.push({ from: to, to: from, amount: backward - forward });
+      }
+
+      seen.add(key);
+      seen.add(reverseKey);
+    });
 
     setUserMap(userMapTemp);
-    setTransactions(combinedTxs);
+    setTransactions(finalTxs);
   };
 
   const getTotalAmount = () =>
