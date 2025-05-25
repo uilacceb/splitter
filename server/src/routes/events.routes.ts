@@ -67,13 +67,11 @@ eventRouter.put("/:id", async (req: any, res: any) => {
 // DELETE: Delete event
 eventRouter.delete("/:id", async (req: any, res: any) => {
   try {
-    const deletedEvent = await Event.findByIdAndDelete(req.params.id);
-    if (!deletedEvent) {
-      return res.status(404).json({ message: "Event not found" });
-    }
-    res.json({ message: "Event deleted successfully" });
+    const deleted = await Event.findOneAndDelete({ _id: req.params.id });
+    if (!deleted) return res.status(404).json({ message: "Event not found" });
+    res.json({ message: "Event and related expenses deleted" });
   } catch (err) {
-    console.error("Failed to delete event:", err);
+    console.error("Error deleting event:", err);
     res.status(500).json({ message: "Failed to delete event" });
   }
 });
