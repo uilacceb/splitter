@@ -1,10 +1,14 @@
-import { Schema, model, Types } from "mongoose";
+import mongoose, { Schema, model, Types } from "mongoose";
 
 const settlementSchema = new Schema(
   {
-    eventId: { type: Types.ObjectId, ref: "Event", required: true },
-    from: { type: String, required: true },
-    to: { type: String, required: true },
+    eventId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Event",
+      required: true,
+    },
+    from: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    to: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     amount: { type: Number, required: true },
     settled: { type: Boolean, default: false },
   },

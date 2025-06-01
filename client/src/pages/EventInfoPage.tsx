@@ -10,6 +10,14 @@ type User = {
   picture: string;
 };
 
+type Settlement = {
+  _id: string;
+  from: User;
+  to: User;
+  amount: number;
+  settled: boolean;
+};
+
 type Expense = {
   _id: string;
   description: string;
@@ -19,12 +27,6 @@ type Expense = {
   createdAt: string;
 };
 
-type Transaction = {
-  from: string;
-  to: string;
-  amount: number;
-};
-
 const EventInfoPage = () => {
   const { eventId, groupId } = useParams<{
     eventId: string;
@@ -32,11 +34,11 @@ const EventInfoPage = () => {
   }>();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [eventTitle, setEventTitle] = useState("");
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [userMap, setUserMap] = useState<Record<string, User>>({});
+  const [settlements, setSettlements] = useState<Settlement[]>([]);
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
+  // Fetch event info
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
@@ -46,75 +48,57 @@ const EventInfoPage = () => {
         console.error("Failed to fetch event title", error);
       }
     };
+    fetchEventDetails();
+  }, [eventId]);
 
+  // Fetch expenses (for listing)
+  useEffect(() => {
     const fetchExpenses = async () => {
       try {
         const res = await axios.get(`/api/expenses?eventId=${eventId}`);
         setExpenses(res.data);
-        generateTransactions(res.data);
       } catch (error) {
         console.error("Failed to fetch expenses", error);
       }
     };
-
-    fetchEventDetails();
     fetchExpenses();
   }, [eventId]);
 
-  const generateTransactions = (expenses: Expense[]) => {
-    const rawTxs: Transaction[] = [];
-    const userMapTemp: Record<string, User> = {};
-
-    // Step 1: Collect all transactions and user info
-    expenses.forEach((expense) => {
-      const payer = expense.paidBy;
-      const splitAmount = expense.amount / expense.splitWith.length;
-      userMapTemp[payer._id] = payer;
-
-      expense.splitWith.forEach((user) => {
-        userMapTemp[user._id] = user;
-        if (user._id !== payer._id) {
-          rawTxs.push({
-            from: user._id,
-            to: payer._id,
-            amount: splitAmount,
-          });
-        }
-      });
-    });
-
-    // Step 2: Combine all transactions between same pairs (from → to)
-    const combinedMap: Record<string, number> = {};
-    rawTxs.forEach(({ from, to, amount }) => {
-      const key = `${from}->${to}`;
-      combinedMap[key] = (combinedMap[key] || 0) + amount;
-    });
-
-    // Step 3: Offset mutual debts
-    const finalTxs: Transaction[] = [];
-    const seen = new Set();
-
-    Object.entries(combinedMap).forEach(([key, amount]) => {
-      if (seen.has(key)) return;
-
-      const [from, to] = key.split("->");
-      const reverseKey = `${to}->${from}`;
-
-      const forward = amount;
-      const backward = combinedMap[reverseKey] || 0;
-
-      if (forward > backward) {
-        finalTxs.push({ from, to, amount: forward - backward });
-      } else if (backward > forward) {
-        finalTxs.push({ from: to, to: from, amount: backward - forward });
+  // Fetch settlements (transactions)
+  useEffect(() => {
+    const fetchSettlements = async () => {
+      try {
+        const res = await axios.get(`/api/settlements?eventId=${eventId}`);
+        setSettlements(res.data);
+      } catch (error) {
+        console.error("Failed to fetch settlements", error);
       }
+    };
+    fetchSettlements();
+  }, [eventId]);
 
-      seen.add(key);
-      seen.add(reverseKey);
-    });
+  // Settle a transaction
+  const handleSettle = async (id: string) => {
+    try {
+      await axios.put(`/api/settlements/${id}/settle`);
+      setSettlements((prev) =>
+        prev.map((s) => (s._id === id ? { ...s, settled: true } : s))
+      );
+    } catch (error) {
+      alert("Failed to settle transaction");
+    }
+  };
 
-    setUserMap(userMapTemp);
-    setTransactions(finalTxs);
+  // Unsettle a transaction
+  const handleUnsettle = async (id: string) => {
+    try {
+      await axios.put(`/api/settlements/${id}/settle`, { settled: false });
+      setSettlements((prev) =>
+        prev.map((s) => (s._id === id ? { ...s, settled: false } : s))
+      );
+    } catch (error) {
+      alert("Failed to unsettle transaction");
+    }
   };
 
   const getTotalAmount = () =>
@@ -129,11 +113,16 @@ const EventInfoPage = () => {
     try {
       await axios.delete(`/api/expenses/${expenseId}`);
       setExpenses((prev) => prev.filter((e) => e._id !== expenseId));
+      // Re-fetch settlements (since transactions may have changed)
+      const res = await axios.get(`/api/settlements?eventId=${eventId}`);
+      setSettlements(res.data);
     } catch (error) {
-      console.error("Failed to delete expense", error);
       alert("Failed to delete expense. Please try again.");
     }
   };
+
+  const unsettled = settlements.filter((s) => !s.settled);
+  const settled = settlements.filter((s) => s.settled);
 
   return (
     <div className="p-4 relative">
@@ -162,51 +151,101 @@ const EventInfoPage = () => {
         Total Expenses: ${getTotalAmount()}
       </div>
 
+      {/* Unsettled Transactions */}
       <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-2">Transaction:</h3>
-        {transactions.length === 0 ? (
-          <p>No transactions yet.</p>
+        <h3 className="text-lg font-semibold mb-2">Unsettled Transactions:</h3>
+        {unsettled.length === 0 ? (
+          <p>No unsettled transactions.</p>
         ) : (
           <ul className="space-y-3">
-            {transactions.map((tx, idx) => (
+            {unsettled.map((tx) => (
               <li
-                key={idx}
-                className="bg-gray-100 p-3 rounded shadow-sm grid grid-cols-[1fr_auto_1fr_auto] items-center gap-4"
+                key={tx._id}
+                className="bg-gray-100 p-3 rounded shadow-sm grid grid-cols-[1fr_auto] items-center gap-2"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <img
-                    src={userMap[tx.from]?.picture}
+                    src={tx.from.picture}
                     alt="from"
                     className="w-8 h-8 rounded-full"
                   />
                   <span className="font-semibold truncate">
-                    {userMap[tx.from]?.name.split(" ")[0] || "Unknown"}
+                    {tx.from.name.split(" ")[0] || "Unknown"}
                   </span>
-                </div>
-                <span className="text-md text-center text-red-500 font-semibold">
-                  owes
-                </span>
-
-                <div className="flex items-center gap-2">
+                  <span className="text-red-500 mx-2">owes</span>
                   <img
-                    src={userMap[tx.to]?.picture}
+                    src={tx.to.picture}
                     alt="to"
                     className="w-8 h-8 rounded-full"
                   />
-                  <span className=" font-semibold truncate">
-                    {userMap[tx.to]?.name.split(" ")[0] || "Unknown"}
+                  <span className="font-semibold truncate">
+                    {tx.to.name.split(" ")[0] || "Unknown"}
+                  </span>
+                  <span className="text-green-800 ml-2">
+                    ${tx.amount.toFixed(2)}
                   </span>
                 </div>
+                <button
+                  className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  onClick={() => handleSettle(tx._id)}
+                  disabled={tx.settled}
+                >
+                  Settle
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
 
-                <span className="text-md text-green-800 text-right font-semibold">
-                  ${tx.amount.toFixed(2)}
-                </span>
+        {/* Settled Transactions */}
+        <h3 className="text-lg font-semibold mt-8 mb-2">
+          Settled Transactions:
+        </h3>
+        {settled.length === 0 ? (
+          <p>No settled transactions.</p>
+        ) : (
+          <ul className="space-y-3">
+            {settled.map((tx) => (
+              <li
+                key={tx._id}
+                className="bg-gray-200 p-3 rounded shadow-sm grid grid-cols-[1fr_auto] items-center gap-2 opacity-60"
+              >
+                <div className="flex items-center gap-2 flex-wrap">
+                  <img
+                    src={tx.from.picture}
+                    alt="from"
+                    className="w-8 h-8 rounded-full"
+                  />
+                  <span className="font-semibold truncate">
+                    {tx.from.name.split(" ")[0] || "Unknown"}
+                  </span>
+                  <span className="text-red-500 mx-2">owes</span>
+                  <img
+                    src={tx.to.picture}
+                    alt="to"
+                    className="w-8 h-8 rounded-full"
+                  />
+                  <span className="font-semibold truncate">
+                    {tx.to.name.split(" ")[0] || "Unknown"}
+                  </span>
+                  <span className="text-green-800 ml-2">
+                    ${tx.amount.toFixed(2)}
+                  </span>
+                </div>
+                <button
+                  className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-800"
+                  onClick={() => handleUnsettle(tx._id)}
+                  disabled={!tx.settled}
+                >
+                  Unsettle
+                </button>
               </li>
             ))}
           </ul>
         )}
       </div>
 
+      {/* Expenses Section */}
       <h2 className="text-xl font-medium mb-2">
         Expenses ({expenses.length}):
       </h2>

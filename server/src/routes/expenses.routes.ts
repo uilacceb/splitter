@@ -1,5 +1,7 @@
 import express from "express";
 import Expense from "../models/Expense";
+import { generateSettlements } from "../utils/genereateSettlements";
+import mongoose from "mongoose";
 
 const expenseRouter = express.Router();
 
@@ -30,6 +32,7 @@ expenseRouter.post("/", async (req, res) => {
       splitWith,
     });
     await expense.save();
+    await generateSettlements(new mongoose.Types.ObjectId(eventId));
     res.status(201).json(expense);
   } catch (err) {
     res.status(500).json({ message: "Failed to add expense" });

@@ -7,6 +7,7 @@ import eventRouter from "./routes/events.routes";
 import expenseRouter from "./routes/expenses.routes";
 import userRouter from "./routes/users.routes";
 import groupRouter from "./routes/groups.routes";
+import settlementRouter from "./routes/settlement.routes";
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ app.use("/api/expenses", expenseRouter);
 app.use("/api/users", userRouter);
 app.use("/api/groups", groupRouter);
 app.use("/api/events", eventRouter);
-
+app.use("/api/settlements", settlementRouter);
 
 mongoose
   .connect(process.env.MONGO_URI!)
