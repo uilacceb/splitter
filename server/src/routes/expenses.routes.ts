@@ -8,18 +8,16 @@ const expenseRouter = express.Router();
 // GET: Expenses for a specific event
 expenseRouter.get("/", async (req, res) => {
   const { eventId } = req.query;
-
   try {
     const expenses = await Expense.find({ eventId })
       .populate("paidBy", "name picture")
       .populate("splitWith", "name picture _id");
-
     res.json(expenses);
   } catch (err) {
-    console.error("Error fetching expenses:", err);
     res.status(500).json({ message: "Failed to fetch expenses" });
   }
 });
+
 // POST: Add expense to an event
 expenseRouter.post("/", async (req, res) => {
   const { eventId, paidBy, amount, description, splitWith } = req.body;
@@ -39,13 +37,35 @@ expenseRouter.post("/", async (req, res) => {
   }
 });
 
-expenseRouter.delete("/:id", async (req: any, res: any) => {
+// PUT: Update an existing expense
+expenseRouter.put("/:id", async (req:any, res:any) => {
+  const { description, amount, splitWith } = req.body;
   try {
-    const deleted = await Expense.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ message: "Expense not found" });
+    const updatedExpense = await Expense.findByIdAndUpdate(
+      req.params.id,
+      { description, amount, splitWith },
+      { new: true }
+    );
+    if (!updatedExpense) {
+      return res.status(404).json({ message: "Expense not found" });
+    }
+    await generateSettlements(new mongoose.Types.ObjectId(updatedExpense.eventId));
+    res.json(updatedExpense);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to update expense" });
+  }
+});
+
+// DELETE: Delete an expense
+expenseRouter.delete("/:id", async (req:any, res:any) => {
+  try {
+    const expense = await Expense.findById(req.params.id);
+    if (!expense) return res.status(404).json({ message: "Expense not found" });
+
+    await expense.deleteOne();
+    await generateSettlements(new mongoose.Types.ObjectId(expense.eventId));
     res.json({ message: "Expense deleted" });
   } catch (err) {
-    console.error("Error deleting expense:", err);
     res.status(500).json({ message: "Failed to delete expense" });
   }
 });
@@ -62,29 +82,6 @@ expenseRouter.get("/:id", async (req: any, res: any) => {
   } catch (err) {
     console.error("Error loading expense:", err);
     res.status(500).json({ message: "Failed to load expense" });
-  }
-});
-
-// PUT: Update an existing expense
-expenseRouter.put("/:id", async (req: any, res: any) => {
-  const { id } = req.params;
-  const { description, amount, splitWith } = req.body;
-
-  try {
-    const updatedExpense = await Expense.findByIdAndUpdate(
-      id,
-      { description, amount, splitWith },
-      { new: true }
-    ).populate("paidBy", "name picture");
-
-    if (!updatedExpense) {
-      return res.status(404).json({ message: "Expense not found" });
-    }
-
-    res.json(updatedExpense);
-  } catch (err) {
-    console.error("Failed to update expense:", err);
-    res.status(500).json({ message: "Failed to update expense" });
   }
 });
 

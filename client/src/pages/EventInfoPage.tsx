@@ -80,10 +80,13 @@ const EventInfoPage = () => {
   // Settle a transaction
   const handleSettle = async (id: string) => {
     try {
-      await axios.put(`/api/settlements/${id}/settle`);
+      await axios.put(`/api/settlements/${id}/settle`, { settled: true });
       setSettlements((prev) =>
         prev.map((s) => (s._id === id ? { ...s, settled: true } : s))
       );
+      // Refetch to avoid any desync
+      const res = await axios.get(`/api/settlements?eventId=${eventId}`);
+      setSettlements(res.data);
     } catch (error) {
       alert("Failed to settle transaction");
     }
@@ -96,6 +99,9 @@ const EventInfoPage = () => {
       setSettlements((prev) =>
         prev.map((s) => (s._id === id ? { ...s, settled: false } : s))
       );
+      // Refetch to avoid any desync
+      const res = await axios.get(`/api/settlements?eventId=${eventId}`);
+      setSettlements(res.data);
     } catch (error) {
       alert("Failed to unsettle transaction");
     }
@@ -233,7 +239,7 @@ const EventInfoPage = () => {
                   </span>
                 </div>
                 <button
-                  className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-800"
+                  className="px-3 py-1 bg-gray-400 text-white rounded hover:bg-gray-600"
                   onClick={() => handleUnsettle(tx._id)}
                   disabled={!tx.settled}
                 >

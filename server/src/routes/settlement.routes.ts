@@ -1,12 +1,11 @@
 import express from "express";
 import Settlement from "../models/Settlement";
+import mongoose from "mongoose";
+import { generateSettlements } from "../utils/genereateSettlements";
 
 const settlementRouter = express.Router();
 
-settlementRouter.get("/test", (req, res) => {
-  res.json({ ok: true });
-});
-// GET settlements for an event
+// GET settlements for an event (with optional 'settled' filter)
 settlementRouter.get("/", async (req, res) => {
   const { eventId, settled } = req.query;
   const query: any = {};
@@ -22,20 +21,21 @@ settlementRouter.get("/", async (req, res) => {
   }
 });
 
-// PUT: Settle a transaction
+// PUT: Settle or unsettle a transaction
 settlementRouter.put("/:id/settle", async (req: any, res: any) => {
   try {
-    const settlement = await Settlement.findByIdAndUpdate(
-      req.params.id,
-      { settled: true },
-      { new: true }
-    );
+    const { settled } = req.body; // settled: true/false
+    const settlement = await Settlement.findById(req.params.id);
     if (!settlement) {
       return res.status(404).json({ message: "Settlement not found" });
     }
+    settlement.settled = settled === undefined ? true : settled;
+    await settlement.save();
+    // Regenerate settlements for this event (to merge/unmerge debts)
+    await generateSettlements(new mongoose.Types.ObjectId(settlement.eventId));
     res.json(settlement);
   } catch (err) {
-    res.status(500).json({ message: "Failed to settle transaction" });
+    res.status(500).json({ message: "Failed to settle/unsettle transaction" });
   }
 });
 
