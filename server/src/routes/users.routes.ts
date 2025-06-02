@@ -3,6 +3,7 @@ import User from "../models/User";
 import FriendRequest from "../models/FriendRequest";
 import mongoose from "mongoose";
 import Expense from "../models/Expense";
+import Settlement from "../models/Settlement";
 
 const userRouter = express.Router();
 
@@ -190,51 +191,51 @@ userRouter.get("/friends/summary", async (req: any, res: any) => {
   if (!userId) return res.status(400).json({ message: "userId is required" });
 
   try {
-    const expenses = await Expense.find({
-      $or: [{ paidBy: userId }, { splitWith: userId }],
+    const settlements = await Settlement.find({
+      $or: [{ from: userId }, { to: userId }],
+      settled: false,
     })
-      .populate("paidBy", "_id name picture")
-      .populate("splitWith", "_id name picture");
+      .populate("from", "_id name picture")
+      .populate("to", "_id name picture");
+
+    function isPopulatedUser(
+      user: any
+    ): user is { _id: any; name: string; picture: string } {
+      return (
+        user && typeof user === "object" && "name" in user && "picture" in user
+      );
+    }
 
     const summaryMap: Record<
       string,
       { name: string; picture: string; amount: number }
     > = {};
 
-    for (const expense of expenses) {
-      const payer = expense.paidBy as any;
-      const splitAmount = expense.amount / expense.splitWith.length;
+    for (const s of settlements) {
+      if (!isPopulatedUser(s.from) || !isPopulatedUser(s.to)) continue;
+      const fromUser = s.from;
+      const toUser = s.to;
 
-      for (const user of expense.splitWith) {
-        const participant = user as any;
-        if (participant._id.toString() === payer._id.toString()) continue;
-
-        const participantId = participant._id.toString();
-        const payerId = payer._id.toString();
-
-        // Case 1: current user is payer → others owe me
-        if (payerId === userId) {
-          if (!summaryMap[participantId]) {
-            summaryMap[participantId] = {
-              name: participant.name,
-              picture: participant.picture,
-              amount: 0,
-            };
-          }
-          summaryMap[participantId].amount += splitAmount;
+      if (fromUser._id.toString() === userId) {
+        const toId = toUser._id.toString();
+        if (!summaryMap[toId]) {
+          summaryMap[toId] = {
+            name: toUser.name,
+            picture: toUser.picture,
+            amount: 0,
+          };
         }
-
-        // Case 2: current user is a participant → I owe the payer
-        if (participantId === userId) {
-          if (!summaryMap[payerId]) {
-            summaryMap[payerId] = {
-              name: payer.name,
-              picture: payer.picture,
-              amount: 0,
-            };
-          }
-          summaryMap[payerId].amount -= splitAmount;
+        summaryMap[toId].amount -= s.amount;
+      } else if (toUser._id.toString() === userId) {
+        const fromId = fromUser._id.toString();
+        if (!summaryMap[fromId]) {
+          summaryMap[fromId] = {
+            name: fromUser.name,
+            picture: fromUser.picture,
+            amount: 0,
+          };
         }
+        summaryMap[fromId].amount += s.amount;
       }
     }
 
@@ -244,7 +245,7 @@ userRouter.get("/friends/summary", async (req: any, res: any) => {
         ...data,
         amount: parseFloat(data.amount.toFixed(2)),
       }))
-      .filter((entry) => Math.abs(entry.amount) > 0.01); // Ignore near-zero
+      .filter((entry) => Math.abs(entry.amount) > 0.01);
 
     res.json(result);
   } catch (error) {

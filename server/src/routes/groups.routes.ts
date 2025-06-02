@@ -2,6 +2,9 @@ import express from "express";
 import mongoose from "mongoose";
 import Group from "../models/Group";
 import GroupRequest from "../models/GroupRequest";
+import Event from "../models/Event";
+import Expense from "../models/Expense";
+import Settlement from "../models/Settlement";
 
 const groupRouter = express.Router();
 
@@ -166,11 +169,19 @@ groupRouter.put("/:id/members/remove", async (req, res) => {
 // DELETE: Delete a group
 groupRouter.delete("/:id", async (req: any, res: any) => {
   try {
-    const deleted = await Group.findOneAndDelete({ _id: req.params.id });
-    if (!deleted) return res.status(404).json({ message: "Group not found" });
-    res.json({ message: "Group and related data deleted" });
+    const deletedGroup = await Group.findOneAndDelete({ _id: req.params.id });
+    if (!deletedGroup)
+      return res.status(404).json({ message: "Group not found" });
+
+    const events = await Event.find({ groupId: req.params.id });
+    const eventIds = events.map((e) => e._id);
+
+    await Event.deleteMany({ groupId: req.params.id });
+    await Expense.deleteMany({ eventId: { $in: eventIds } });
+    await Settlement.deleteMany({ eventId: { $in: eventIds } });
+
+    res.json({ message: "Group, events, expenses, and settlements deleted" });
   } catch (err) {
-    console.error("Error deleting group:", err);
     res.status(500).json({ message: "Failed to delete group" });
   }
 });

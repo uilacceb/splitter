@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import GoBack from "../components/GoBack";
 import { PencilLine, Trash2 } from "lucide-react";
+import TransactionInfo, { Transaction } from "../components/TransactionInfo";
 
 type User = {
   _id: string;
@@ -28,17 +29,36 @@ type Expense = {
 };
 
 const EventInfoPage = () => {
-  const { eventId, groupId } = useParams<{
-    eventId: string;
-    groupId: string;
-  }>();
+  const { eventId, groupId } = useParams<{ eventId: string; groupId: string }>();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [eventTitle, setEventTitle] = useState("");
   const [settlements, setSettlements] = useState<Settlement[]>([]);
+  const [transactionSummary, setTransactionSummary] = useState<Transaction[]>([]);
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
-  // Fetch event info
+  function settlementsToTransactions(settlements: Settlement[], currentUserId: string): Transaction[] {
+    const transactions: Transaction[] = [];
+    settlements.forEach((s) => {
+      if (s.from._id === currentUserId) {
+        transactions.push({
+          name: s.to.name,
+          amount: -s.amount,
+          type: "owe",
+          picture: s.to.picture,
+        });
+      } else if (s.to._id === currentUserId) {
+        transactions.push({
+          name: s.from.name,
+          amount: s.amount,
+          type: "expect",
+          picture: s.from.picture,
+        });
+      }
+    });
+    return transactions;
+  }
+
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
@@ -51,7 +71,6 @@ const EventInfoPage = () => {
     fetchEventDetails();
   }, [eventId]);
 
-  // Fetch expenses (for listing)
   useEffect(() => {
     const fetchExpenses = async () => {
       try {
@@ -64,7 +83,6 @@ const EventInfoPage = () => {
     fetchExpenses();
   }, [eventId]);
 
-  // Fetch settlements (transactions)
   useEffect(() => {
     const fetchSettlements = async () => {
       try {
@@ -77,31 +95,29 @@ const EventInfoPage = () => {
     fetchSettlements();
   }, [eventId]);
 
-  // Settle a transaction
+  useEffect(() => {
+    setTransactionSummary(
+      settlementsToTransactions(settlements.filter((s) => !s.settled), currentUser._id)
+    );
+  }, [settlements, currentUser._id]);
+
   const handleSettle = async (id: string) => {
     try {
       await axios.put(`/api/settlements/${id}/settle`, { settled: true });
-      setSettlements((prev) =>
-        prev.map((s) => (s._id === id ? { ...s, settled: true } : s))
-      );
-      // Refetch to avoid any desync
       const res = await axios.get(`/api/settlements?eventId=${eventId}`);
       setSettlements(res.data);
+      window.dispatchEvent(new Event("settlementsChanged")); // <-- NEW: notify others
     } catch (error) {
       alert("Failed to settle transaction");
     }
   };
 
-  // Unsettle a transaction
   const handleUnsettle = async (id: string) => {
     try {
       await axios.put(`/api/settlements/${id}/settle`, { settled: false });
-      setSettlements((prev) =>
-        prev.map((s) => (s._id === id ? { ...s, settled: false } : s))
-      );
-      // Refetch to avoid any desync
       const res = await axios.get(`/api/settlements?eventId=${eventId}`);
       setSettlements(res.data);
+      window.dispatchEvent(new Event("settlementsChanged")); // <-- NEW: notify others
     } catch (error) {
       alert("Failed to unsettle transaction");
     }
@@ -119,9 +135,9 @@ const EventInfoPage = () => {
     try {
       await axios.delete(`/api/expenses/${expenseId}`);
       setExpenses((prev) => prev.filter((e) => e._id !== expenseId));
-      // Re-fetch settlements (since transactions may have changed)
       const res = await axios.get(`/api/settlements?eventId=${eventId}`);
       setSettlements(res.data);
+      window.dispatchEvent(new Event("settlementsChanged")); // <-- NEW: notify others
     } catch (error) {
       alert("Failed to delete expense. Please try again.");
     }
@@ -155,6 +171,11 @@ const EventInfoPage = () => {
 
       <div className="text-xl font-medium mb-4 text-green-700">
         Total Expenses: ${getTotalAmount()}
+      </div>
+
+      {/* --- TransactionInfo summary --- */}
+      <div className="mb-8">
+        <TransactionInfo transactions={transactionSummary} />
       </div>
 
       {/* Unsettled Transactions */}

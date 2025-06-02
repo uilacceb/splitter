@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import AllClear from "../components/AllClear";
 import TransactionInfo from "../components/TransactionInfo";
@@ -23,6 +23,18 @@ const FriendsPage = () => {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
+  const fetchTransactions = useCallback(async () => {
+    try {
+      const txRes = await axios.get(
+        `/api/users/friends/summary?userId=${currentUser._id}`
+      );
+      const txs = txRes.data;
+      setTransactions(txs);
+    } catch (error) {
+      console.error("Failed to load transactions", error);
+    }
+  }, [currentUser._id]);
+
   useEffect(() => {
     const fetchFriendsAndTransactions = async () => {
       try {
@@ -30,19 +42,27 @@ const FriendsPage = () => {
           `/api/users/friends?userId=${currentUser._id}`
         );
         setFriends(res.data);
-
-        const txRes = await axios.get(
-          `/api/users/friends/summary?userId=${currentUser._id}`
-        );
-        const txs = txRes.data; // expected format: [{ name, amount, type, picture }]
-        setTransactions(txs);
+        await fetchTransactions();
       } catch (error) {
         console.error("Failed to load friends or transactions", error);
       }
     };
 
     fetchFriendsAndTransactions();
-  }, [currentUser._id]);
+  }, [currentUser._id, fetchTransactions]);
+
+  // Listen for "settlementsChanged" custom event to refresh instantly
+  useEffect(() => {
+    const handler = () => fetchTransactions();
+    window.addEventListener("settlementsChanged", handler);
+    return () => window.removeEventListener("settlementsChanged", handler);
+  }, [fetchTransactions]);
+
+  // Optionally, still refresh on tab focus
+  useEffect(() => {
+    window.addEventListener("focus", fetchTransactions);
+    return () => window.removeEventListener("focus", fetchTransactions);
+  }, [fetchTransactions]);
 
   return (
     <>

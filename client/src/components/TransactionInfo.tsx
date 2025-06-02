@@ -1,6 +1,6 @@
 import React from "react";
 
-type Transaction = {
+export type Transaction = {
   name: string;
   amount: number;
   type: "owe" | "expect";

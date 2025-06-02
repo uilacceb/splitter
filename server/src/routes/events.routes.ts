@@ -1,5 +1,7 @@
 import express from "express";
 import Event from "../models/Event";
+import Expense from "../models/Expense";
+import Settlement from "../models/Settlement";
 
 const eventRouter = express.Router();
 
@@ -69,11 +71,13 @@ eventRouter.delete("/:id", async (req: any, res: any) => {
   try {
     const deleted = await Event.findOneAndDelete({ _id: req.params.id });
     if (!deleted) return res.status(404).json({ message: "Event not found" });
-    res.json({ message: "Event and related expenses deleted" });
+    await Expense.deleteMany({ eventId: req.params.id });
+    await Settlement.deleteMany({ eventId: req.params.id });
+    res.json({ message: "Event, expenses, and settlements deleted" });
   } catch (err) {
-    console.error("Error deleting event:", err);
     res.status(500).json({ message: "Failed to delete event" });
   }
 });
+
 
 export default eventRouter;
