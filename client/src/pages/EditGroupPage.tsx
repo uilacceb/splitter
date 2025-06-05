@@ -182,7 +182,7 @@ const EditGroupPage = () => {
 
   return (
     <form
-      className="m-4 flex flex-col space-y-4 p-4  relative"
+      className="m-4 flex flex-col space-y-4 p-4 relative lg:p-12"
       onSubmit={handleUpdateGroup}
     >
       <GoBack />
@@ -329,14 +329,14 @@ const EditGroupPage = () => {
       <div className="flex flex-col gap-2 pt-4 md:gap-3 md:pt-8">
         <button
           type="submit"
-          className="bg-[#2F5A62] text-white p-2 rounded text-xl md:text-2xl"
+          className="bg-[#2F5A62] text-white p-2 rounded text-xl md:text-2xl lg:w-[70%]"
         >
           Update
         </button>
         <button
           type="button"
           onClick={handleDeleteGroup}
-          className="bg-[#e03535] text-white p-2 rounded text-xl md:text-2xl"
+          className="bg-[#e03535] text-white p-2 rounded text-xl md:text-2xl lg:w-[70%]"
         >
           Delete Group
         </button>

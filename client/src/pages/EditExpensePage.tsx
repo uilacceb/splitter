@@ -115,7 +115,7 @@ const EditExpensePage = () => {
   }
 
   return (
-    <div className="p-4 relative md:p-8">
+    <div className="p-4 relative md:p-8 lg:p-14">
       <GoBack />
       <h2 className="text-2xl font-semibold mb-4 mt-8 md:text-3xl md:mt-12">
         Edit Expense

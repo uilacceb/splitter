@@ -179,7 +179,7 @@ const EventInfoPage = () => {
   const settled = settlements.filter((s) => s.settled);
 
   return (
-    <div className="p-4 relative">
+    <div className="p-4 relative lg:p-12">
       <GoBack />
 
       <div className="flex justify-end mb-4">
