@@ -24,31 +24,29 @@ export const RequestProvider = ({
     total: 0,
   });
 
-  useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "friendRequests" || e.key === "groupRequests") {
-        refreshCounts();
-      }
-    };
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
-
+  // Safe refreshCounts: Don't fetch if userId is missing
   const refreshCounts = async () => {
     try {
       const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const userId = user?._id;
+
+      if (!userId) {
+        // If not logged in, clear all counts (optional)
+        setCounts({ friend: 0, group: 0, total: 0 });
+        return;
+      }
 
       const [friendRes, groupRes] = await Promise.all([
-        fetch(`/api/users/friends/requests?userId=${user._id}`).then((res) =>
+        fetch(`/api/users/friends/requests?userId=${userId}`).then((res) =>
           res.json()
         ),
-        fetch(`/api/groups/requests?userId=${user._id}`).then((res) =>
+        fetch(`/api/groups/requests?userId=${userId}`).then((res) =>
           res.json()
         ),
       ]);
 
-      const friendCount = friendRes.length;
-      const groupCount = groupRes.length;
+      const friendCount = Array.isArray(friendRes) ? friendRes.length : 0;
+      const groupCount = Array.isArray(groupRes) ? groupRes.length : 0;
 
       setCounts({
         friend: friendCount,
@@ -63,8 +61,28 @@ export const RequestProvider = ({
     }
   };
 
+  // Only call refreshCounts if userId exists
   useEffect(() => {
-    refreshCounts();
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    if (user?._id) {
+      refreshCounts();
+    }
+    // Don't run if no user._id
+  }, []);
+
+  // Listen for storage changes and refresh if userId exists
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "friendRequests" || e.key === "groupRequests") {
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        if (user?._id) {
+          refreshCounts();
+        }
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () =>
+      window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   return (
