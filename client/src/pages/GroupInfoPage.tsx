@@ -84,15 +84,15 @@ const GroupInfoPage = () => {
         onClick={() => navigate(`/groups/${group._id}/add-event`)}
       >
         <PlusCircle color="#39625C" />
-        <span className="pl-1">Add Event</span>
+        <span className="pl-1 md:text-2xl">Add Event</span>
       </div>
 
       <img
         src={group.icon}
         alt={group.title}
-        className="w-16 h-16 rounded-full my-4 mx-auto"
+        className="w-16 h-16 rounded-full my-4 mx-auto md:w-18 md:h-18"
       />
-      <h2 className="text-2xl font-semibold text-center">
+      <h2 className="text-2xl font-semibold text-center md:text-3xl">
         {group.title}{" "}
         <PencilLine
           color="#bcc2be"
@@ -101,10 +101,10 @@ const GroupInfoPage = () => {
         />
       </h2>
 
-      <h3 className="text-lg font-medium mt-8 mb-2">
+      <h3 className="text-lg font-medium mt-8 mb-2 md:text-2xl">
         Members ({group.members.length}):
       </h3>
-      <ul className="space-y-2">
+      <ul className="space-y-2 md:space-y-5">
         {group.members.map((member) => (
           <li
             key={member._id}
@@ -114,22 +114,22 @@ const GroupInfoPage = () => {
             <img
               src={member.picture}
               alt={member.name}
-              className="w-5 h-5 rounded-full mr-3"
+              className="w-5 h-5 rounded-full mr-3 md:w-7 md:h-7"
             />
             <div>
-              <h4 className="text-md">{member.name}</h4>
+              <h4 className="text-md md:text-2xl">{member.name}</h4>
             </div>
           </li>
         ))}
       </ul>
 
-      <h3 className="text-lg font-medium mt-8 mb-2">
+      <h3 className="text-lg font-medium mt-8 mb-2 md:text-2xl">
         Events ({events.length}):
       </h3>
       {events.length === 0 ? (
-        <p className="text-gray-600">No events yet.</p>
+        <p className="text-gray-600 md:text-2xl">No events yet.</p>
       ) : (
-        <ul className="space-y-3">
+        <ul className="space-y-3 md:space-y-5">
           {events.map((event) => (
             <li
               key={event._id}
@@ -142,13 +142,13 @@ const GroupInfoPage = () => {
                 }
               >
                 <div className="flex justify-between items-center">
-                  <span>{event.title}</span>
-                  <span className="text-sm text-gray-500">
+                  <span className="md:text-2xl">{event.title}</span>
+                  <span className="text-sm text-gray-500 md:text-lg">
                     {new Date(event.date).toLocaleDateString()}
                   </span>
                 </div>
               </div>
-              <div className="flex gap-3 ml-4">
+              <div className="flex gap-3 ml-4 ">
                 {/* <PencilLine
                   color="#6b7280"
                   className="w-5 h-5 cursor-pointer"
@@ -158,7 +158,7 @@ const GroupInfoPage = () => {
                 /> */}
                 <Trash2
                   color="#ef4444"
-                  className="w-5 h-5 cursor-pointer"
+                  className="w-5 h-5 cursor-pointer md:w-6 md:h-6"
                   onClick={() => handleDeleteEvent(event._id)}
                 />
               </div>

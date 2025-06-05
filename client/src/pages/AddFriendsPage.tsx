@@ -76,15 +76,15 @@ const AddFriendsPage = () => {
   return (
     <div className="flex flex-col p-4">
       <p
-        className="text-right cursor-pointer"
+        className="text-right cursor-pointer md:text-2xl"
         onClick={() => navigate("/requests")}
       >
         Requests ({counts.total})
       </p>
-      <label htmlFor="email">Enter the email</label>
+      <label htmlFor="email" className="md:text-3xl">Enter the email</label>
       <input
         id="email"
-        className="border-2 border-gray-400 p-2 mt-1"
+        className="border-2 border-gray-400 p-2 mt-1 md:text-2xl"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search user by email"
@@ -97,7 +97,7 @@ const AddFriendsPage = () => {
           {results.map((user) => (
             <li
               key={user._id}
-              className="flex items-center border p-2 rounded bg-gray-100"
+              className="flex items-center border p-2 rounded bg-gray-100 md:text-2xl"
             >
               <img
                 src={user.picture}
@@ -110,10 +110,10 @@ const AddFriendsPage = () => {
 
               <div className="ml-auto cursor-pointer">
                 {sentRequests.includes(user._id) ? (
-                  <Clock className="text-yellow-600" />
+                  <Clock className="text-yellow-600 md:w-6 md:h-6" />
                 ) : (
                   <UserPlus
-                    className="text-[#39625C] hover:text-green-800"
+                    className="text-[#39625C] hover:text-green-800 md:w-8 md:h-8"
                     onClick={() => sendFriendRequest(user._id)}
                   />
                 )}

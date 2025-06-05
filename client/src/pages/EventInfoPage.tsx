@@ -152,7 +152,7 @@ const EventInfoPage = () => {
 
       <div className="flex justify-end mb-4">
         <button
-          className="flex items-center gap-2 px-4 py-2 bg-[#39625C] text-white rounded hover:bg-[#83A99B]"
+          className="flex items-center gap-2 px-4 py-2 bg-[#39625C] text-white rounded hover:bg-[#83A99B] md:text-2xl"
           onClick={() =>
             navigate(`/groups/${groupId}/events/${eventId}/add-expense`)
           }
@@ -162,33 +162,33 @@ const EventInfoPage = () => {
       </div>
 
       <div className="flex items-center gap-2 mb-6">
-        <h2 className="text-3xl font-semibold">{eventTitle}</h2>
+        <h2 className="text-3xl font-semibold md:text-4xl">{eventTitle}</h2>
         <PencilLine
           className="text-gray-500 cursor-pointer"
           onClick={() => navigate(`/groups/${groupId}/events/${eventId}/edit`)}
         />
       </div>
 
-      <div className="text-xl font-medium mb-4 text-green-700">
+      <div className="text-xl font-medium mb-4 text-green-700 md:text-2xl">
         Total Expenses: ${getTotalAmount()}
       </div>
 
       {/* --- TransactionInfo summary --- */}
-      <div className="mb-8">
+      <div className="mb-8 ">
         <TransactionInfo transactions={transactionSummary} />
       </div>
 
       {/* Unsettled Transactions */}
       <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-2">Unsettled Transactions:</h3>
+        <h3 className="text-lg font-semibold mb-2 md:text-2xl">Unsettled Transactions:</h3>
         {unsettled.length === 0 ? (
-          <p>No unsettled transactions.</p>
+          <p className="md:text-2xl">No unsettled transactions.</p>
         ) : (
-          <ul className="space-y-3">
+          <ul className="space-y-3 md:space-y-5">
             {unsettled.map((tx) => (
               <li
                 key={tx._id}
-                className="bg-gray-100 p-3 rounded shadow-sm grid grid-cols-[1fr_auto] items-center gap-2"
+                className="bg-gray-100 p-3 rounded shadow-sm grid grid-cols-[1fr_auto] items-center gap-2 md:text-2xl"
               >
                 <div className="flex items-center gap-2 flex-wrap">
                   <img
@@ -225,17 +225,17 @@ const EventInfoPage = () => {
         )}
 
         {/* Settled Transactions */}
-        <h3 className="text-lg font-semibold mt-8 mb-2">
+        <h3 className="text-lg font-semibold mt-8 mb-2 md:text-2xl">
           Settled Transactions:
         </h3>
         {settled.length === 0 ? (
-          <p>No settled transactions.</p>
+          <p className="md:text-2xl">No settled transactions.</p>
         ) : (
-          <ul className="space-y-3">
+          <ul className="space-y-3 md:space-y-5">
             {settled.map((tx) => (
               <li
                 key={tx._id}
-                className="bg-gray-200 p-3 rounded shadow-sm grid grid-cols-[1fr_auto] items-center gap-2 opacity-60"
+                className="bg-gray-200 p-3 rounded shadow-sm grid grid-cols-[1fr_auto] items-center gap-2 opacity-60 md:text-2xl"
               >
                 <div className="flex items-center gap-2 flex-wrap">
                   <img
@@ -273,7 +273,7 @@ const EventInfoPage = () => {
       </div>
 
       {/* Expenses Section */}
-      <h2 className="text-xl font-medium mb-2">
+      <h2 className="text-xl font-medium mb-2 md:text-2xl">
         Expenses ({expenses.length}):
       </h2>
       {expenses.length === 0 ? (
@@ -283,10 +283,10 @@ const EventInfoPage = () => {
           {expenses.map((expense) => (
             <li
               key={expense._id}
-              className="border rounded p-4 bg-gray-50 shadow-sm flex justify-between items-center"
+              className="border rounded p-4 bg-gray-50 shadow-sm flex justify-between items-center "
             >
               <div
-                className="flex items-center gap-4 cursor-pointer"
+                className="flex items-center gap-4 cursor-pointer "
                 onClick={() =>
                   navigate(
                     `/groups/${groupId}/events/${eventId}/expenses/${expense._id}`
@@ -296,18 +296,18 @@ const EventInfoPage = () => {
                 <img
                   src={expense.paidBy?.picture}
                   alt="payer"
-                  className="w-10 h-10 rounded-full"
+                  className="w-10 h-10 rounded-full "
                 />
                 <div>
-                  <p className="text-lg font-semibold">{expense.description}</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-lg font-semibold md:text-2xl">{expense.description}</p>
+                  <p className="text-sm text-gray-600 md:text-lg">
                     Paid by {expense.paidBy.name}
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center gap-4">
-                <span className="font-bold text-green-700 text-lg">
+                <span className="font-bold text-green-700 text-lg md:text-2xl">
                   ${expense.amount.toFixed(2)}
                 </span>
                 {expense.paidBy._id === currentUser._id && (

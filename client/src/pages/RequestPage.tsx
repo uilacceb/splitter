@@ -99,25 +99,29 @@ const Requests = () => {
   return (
     <div className="p-4 relative">
       <GoBack />
-      <h2 className="text-xl font-semibold mb-4 mt-8">Friend Requests</h2>
+      <h2 className="text-xl font-semibold mb-4 mt-8 md:text-4xl md:mt-16">
+        Friend Requests
+      </h2>
       {friendRequests.length > 0 ? (
         <ul className="space-y-2">
           {friendRequests.map((req) => (
             <li
               key={req._id}
-              className="border p-3 rounded flex justify-between items-center bg-gray-100"
+              className="border p-3 rounded flex justify-between items-center bg-gray-100 md:text-2xl"
             >
               <div>
-                <p className="font-medium">{req.from.name}</p>
-                <p className="text-sm text-gray-600">{req.from.email}</p>
+                <p className="font-medium md:text-2xl">{req.from.name}</p>
+                <p className="text-sm text-gray-600 md:text-2xl">
+                  {req.from.email}
+                </p>
               </div>
               <div className="flex items-center space-x-2">
                 <Check
-                  className="text-[#39625C]"
+                  className="text-[#39625C] md:w-8 md:h-8"
                   onClick={() => acceptFriend(req._id)}
                 />
                 <X
-                  className="text-[#e24f3b]"
+                  className="text-[#e24f3b] md:w-8 md:h-8"
                   onClick={() => ignoreFriend(req._id)}
                 />
               </div>
@@ -125,30 +129,32 @@ const Requests = () => {
           ))}
         </ul>
       ) : (
-        <p>No pending friend requests.</p>
+        <p className="md:text-2xl">No pending friend requests.</p>
       )}
 
-      <h2 className="text-xl font-semibold mt-8 mb-4">Group Requests</h2>
+      <h2 className="text-xl font-semibold mt-8 mb-4 md:text-4xl">
+        Group Requests
+      </h2>
       {groupRequests.length > 0 ? (
         <ul className="space-y-2">
           {groupRequests.map((req) => (
             <li
               key={req._id}
-              className="border p-3 rounded flex justify-between items-center bg-gray-100"
+              className="border p-3 rounded flex justify-between items-center bg-gray-100 md:text-2xl"
             >
               <div>
                 <p className="font-medium">{req.from.name}</p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 md:text-2xl">
                   invited you to join <strong>{req.groupId?.title}</strong>
                 </p>
               </div>
               <div className="flex items-center space-x-2">
                 <Check
-                  className="text-[#39625C]"
+                  className="text-[#39625C] md:w-8 md:h-8"
                   onClick={() => acceptGroup(req._id)}
                 />
                 <X
-                  className="text-[#e24f3b]"
+                  className="text-[#e24f3b] md:w-8 md:h-8"
                   onClick={() => ignoreGroup(req._id)}
                 />
               </div>
@@ -156,7 +162,7 @@ const Requests = () => {
           ))}
         </ul>
       ) : (
-        <p>No pending group requests.</p>
+        <p className="md:text-2xl">No pending group requests.</p>
       )}
     </div>
   );

@@ -116,7 +116,7 @@ const CreateGroupPage = () => {
       <div className=" pr-4 pt-4 relative">
         <GoBack />
         <p
-          className="text-right cursor-pointer"
+          className="text-right cursor-pointer md:text-2xl"
           onClick={() => navigate("/requests")}
         >
           Requests ({counts.total})
@@ -127,10 +127,12 @@ const CreateGroupPage = () => {
         onSubmit={createGroup}
       >
         <div className="flex flex-col">
-          <label className="text-2xl font-semibold pb-2">Group Title</label>
+          <label className="text-2xl font-semibold pb-2 md:text-3xl">
+            Group Title
+          </label>
           <input
             type="text"
-            className="border-2 border-gray-300 p-2 w-[70%]"
+            className="border-2 border-gray-300 p-2 w-[70%] md:text-2xl"
             onChange={(e) => setGroupName(e.target.value)}
             value={groupName}
             placeholder="Enter group name"
@@ -138,7 +140,9 @@ const CreateGroupPage = () => {
         </div>
 
         <div>
-          <h1 className="text-2xl font-semibold pb-4">Group Icon</h1>
+          <h1 className="text-2xl font-semibold pb-4 md:text-3xl">
+            Group Icon
+          </h1>
           <div className="flex items-center space-x-2">
             {randomIcon && (
               <img
@@ -146,7 +150,7 @@ const CreateGroupPage = () => {
                 alt="Group Icon"
                 width={70}
                 height={70}
-                className="mr-6"
+                className="mr-6 md:w-24 md:h-24"
               />
             )}
             <RefreshCcw color="#a9b0ab" onClick={refreshIcon} />
@@ -154,18 +158,20 @@ const CreateGroupPage = () => {
           <a
             href="https://www.flaticon.com/free-icons/bee"
             title="icons reference"
-            className="text-sm pt-4 text-gray-500 block w-[70px]"
+            className="text-sm pt-4 text-gray-500 block w-[70px] md:text-lg md:w-[80px]"
           >
             (by Freepik - Flaticon)
           </a>
         </div>
 
         <div>
-          <h1 className="text-2xl font-semibold pb-2">Add Participants</h1>
-          <label htmlFor="email">Enter email or name</label>
+          <h1 className="text-2xl font-semibold pb-2 md:text-3xl">
+            Add Participants
+          </h1>
+          <label htmlFor="email" className="md:text-xl">Enter email or name</label>
           <input
             id="email"
-            className="border-2 border-gray-400 p-2 mt-1 block w-[70%]"
+            className="border-2 border-gray-400 p-2 mt-1 block w-[70%] md:text-2xl"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search user by email or name"
@@ -176,7 +182,7 @@ const CreateGroupPage = () => {
               {filteredResults.map((user) => (
                 <li
                   key={user._id}
-                  className="flex items-center justify-between border p-2 rounded bg-gray-100 cursor-pointer"
+                  className="flex items-center justify-between border p-2 rounded bg-gray-100 cursor-pointer md:text-2xl"
                   onClick={() => addFriendToGroup(user)}
                 >
                   <div className="flex items-center space-x-2">
@@ -187,7 +193,7 @@ const CreateGroupPage = () => {
                     />
                     <span>{user.name}</span>
                   </div>
-                  <span className="text-sm text-gray-500">{user.email}</span>
+                  <span className="text-sm text-gray-500 md:text-2xl">{user.email}</span>
                 </li>
               ))}
             </ul>
@@ -195,12 +201,12 @@ const CreateGroupPage = () => {
         </div>
 
         <div>
-          <h2 className="text-xl font-semibold mt-4 pb-2">
+          <h2 className="text-xl font-semibold mt-4 pb-2 md:text-2xl">
             Selected Participants:
           </h2>
           <ul className="mt-2 space-y-2">
             {selectedFriends.map((friend) => (
-              <li key={friend._id} className="flex items-center w-[100%]  p-2 ">
+              <li key={friend._id} className="flex items-center w-[100%] p-2 md:text-2xl">
                 <img
                   src={friend.picture}
                   alt={friend.name}
@@ -209,7 +215,7 @@ const CreateGroupPage = () => {
                 <span className="ml-2">{friend.name}</span>
                 <button
                   type="button"
-                  className="bg-red-500 text-white ml-auto p-1 rounded cursor-pointer"
+                  className="bg-red-500 text-white ml-auto p-1 rounded cursor-pointer md:p-2"
                   onClick={() => removeFriendFromGroup(friend)}
                 >
                   remove
@@ -220,7 +226,7 @@ const CreateGroupPage = () => {
         </div>
         <button
           type="submit"
-          className="bg-[#2F5A62] text-white p-2 rounded text-xl"
+          className="bg-[#2F5A62] text-white p-2 rounded text-xl md:text-2xl"
         >
           create
         </button>

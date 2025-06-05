@@ -85,13 +85,13 @@ const FriendInfoPage = () => {
   return (
     <div className="p-4 relative">
       <GoBack />
-      <div className="flex flex-col items-center gap-3 mt-4">
+      <div className="flex flex-col items-center gap-3 mt-4 md:text-3xl md:mt-20">
         <img
           src={friend.picture}
           alt={friend.name}
           className="w-24 h-24 rounded-full"
         />
-        <h2 className="text-xl font-semibold">{friend.name}</h2>
+        <h2 className="text-xl font-semibold md:text-3xl">{friend.name}</h2>
         <p className="text-gray-600">{friend.email}</p>
 
         {error && <p className="text-red-500 mt-2">{error}</p>}

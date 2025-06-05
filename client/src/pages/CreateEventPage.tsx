@@ -70,27 +70,29 @@ const CreateEventPage = () => {
   return (
     <div className="p-6 relative">
       <GoBack />
-      <h2 className="text-2xl font-semibold mb-4 mt-4">Create an Event</h2>
+      <h2 className="text-2xl font-semibold mb-4 mt-4 md:text-3xl md:mt-8">
+        Create an Event
+      </h2>
       <form onSubmit={handleSubmit} className="space-y-4 ">
         <input
           type="text"
           placeholder="Event Title"
-          className="w-full border p-2 rounded"
+          className="w-full border p-2 rounded md:text-2xl"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
 
         <input
           type="date"
-          className="w-full border p-2 rounded"
+          className="w-full border p-2 rounded md:text-2xl"
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
 
         <div className="pt-6 ">
           <div className="flex items-center justify-between mb-2 ">
-            <p className="font-medium mb-1 ">Select Participants</p>
-            <label className="flex items-center mb-2 cursor-pointer">
+            <p className="font-medium mb-1 md:text-2xl">Select Participants</p>
+            <label className="flex items-center mb-2 cursor-pointer md:text-2xl">
               <input
                 type="checkbox"
                 checked={selectedParticipants.length === members.length}
@@ -101,17 +103,17 @@ const CreateEventPage = () => {
                     setSelectedParticipants([]);
                   }
                 }}
-                className="mr-2"
+                className="mr-2 md:w-5 md:h-5"
               />
               <span>Select All</span>
             </label>
           </div>
 
-          <ul className="space-y-2">
+          <ul className="space-y-2 md:space-y-4">
             {members.map((member) => (
               <li
                 key={member._id}
-                className={`flex items-center p-2 border rounded cursor-pointer ${
+                className={`flex items-center p-2 border rounded cursor-pointer md:text-2xl ${
                   selectedParticipants.includes(member._id)
                     ? "bg-green-100 border-green-400"
                     : "bg-white"
@@ -133,7 +135,7 @@ const CreateEventPage = () => {
         <div className="pt-4 flex justify-end">
           <button
             type="submit"
-            className="bg-[#2F5A62] text-white p-2 px-4 rounded text-lg"
+            className="bg-[#2F5A62] text-white p-2 px-4 rounded text-lg md:text-2xl"
           >
             Create Event
           </button>

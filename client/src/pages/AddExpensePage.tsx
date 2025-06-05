@@ -77,25 +77,29 @@ const AddExpensePage = () => {
   return (
     <div className="p-4 relative">
       <GoBack />
-      <h2 className="text-2xl font-semibold mb-4 mt-8">Add Expense</h2>
+      <h2 className="text-2xl font-semibold mb-4 mt-8 md:text-3xl md:mt-10">
+        Add Expense
+      </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
           placeholder="Description"
-          className="w-full border p-2 rounded"
+          className="w-full border p-2 rounded md:text-2xl"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
         <input
           type="number"
           placeholder="Amount"
-          className="w-full border p-2 rounded"
+          className="w-full border p-2 rounded md:text-2xl"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
         />
 
-        <div>
-          <label className="block font-medium mb-1">Split Type:</label>
+        <div className="md:pb-4">
+          <label className="block font-semibold mb-1 md:text-2xl md:mt-8 md:mb-4">
+            Split Type:
+          </label>
           <div className="flex items-center gap-4">
             <label>
               <input
@@ -104,8 +108,9 @@ const AddExpensePage = () => {
                 value="equal"
                 checked={splitType === "equal"}
                 onChange={() => setSplitType("equal")}
+                className="md:w-4 md:h-4"
               />
-              <span className="ml-1">Split equally</span>
+              <span className="ml-1 md:text-2xl">Split equally</span>
             </label>
             <label>
               <input
@@ -114,20 +119,23 @@ const AddExpensePage = () => {
                 value="custom"
                 checked={splitType === "custom"}
                 onChange={() => setSplitType("custom")}
+                className="md:w-4 md:h-4"
               />
-              <span className="ml-1">Split with selected</span>
+              <span className="ml-1 md:text-2xl">Split with selected</span>
             </label>
           </div>
         </div>
 
         {splitType === "custom" && (
-          <div className="mt-3">
-            <p className="mb-1 font-medium">Select Participants:</p>
-            <ul className="space-y-2">
+          <div className="mt-3 md:pb-4">
+            <p className="mb-1 font-semibold md:text-2xl md:pb-3">
+              Select Participants:
+            </p>
+            <ul className="space-y-2 md:space-y-4">
               {participants.map((p) => (
                 <li
                   key={p._id}
-                  className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-2 rounded"
+                  className="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-2 rounded md:text-2xl"
                   onClick={() => toggleParticipant(p._id)}
                 >
                   <input
@@ -135,6 +143,7 @@ const AddExpensePage = () => {
                     checked={selectedIds.includes(p._id)}
                     onClick={(e) => e.stopPropagation()}
                     onChange={() => toggleParticipant(p._id)}
+                    className="md:w-4 md:h-4"
                   />
                   <img
                     src={p.picture}
@@ -152,7 +161,7 @@ const AddExpensePage = () => {
 
         <button
           type="submit"
-          className="bg-[#2F5A62] text-white p-2 px-4 rounded text-lg"
+          className="bg-[#2F5A62] text-white p-2 px-4 rounded text-lg md:text-2xl"
         >
           Add Expense
         </button>

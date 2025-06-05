@@ -186,19 +186,21 @@ const EditGroupPage = () => {
       onSubmit={handleUpdateGroup}
     >
       <GoBack />
-      <div className="flex flex-col">
-        <label className="text-2xl font-semibold pt-3 pb-2">Group Title</label>
+      <div className="flex flex-col md:pb-4">
+        <label className="text-2xl font-semibold pt-3 pb-2 md:text-3xl md:pt-6">
+          Group Title
+        </label>
         <input
           type="text"
-          className="border-2 border-gray-300 p-2 w-[70%]"
+          className="border-2 border-gray-300 p-2 w-[70%] md:text-2xl"
           onChange={(e) => setGroupName(e.target.value)}
           value={groupName}
           placeholder="Change your group name"
         />
       </div>
 
-      <div>
-        <h1 className="text-2xl font-semibold pb-4">Group Icon</h1>
+      <div className="md:pb-4">
+        <h1 className="text-2xl font-semibold pb-4 md:text-3xl">Group Icon</h1>
         <div className="flex items-center space-x-2">
           {randomIcon && (
             <img
@@ -213,10 +215,12 @@ const EditGroupPage = () => {
         </div>
       </div>
 
-      <div>
-        <h1 className="text-2xl font-semibold pb-2">Add Participants</h1>
+      <div className="md:pb-4">
+        <h1 className="text-2xl font-semibold pb-2 md:text-3xl">
+          Add Participants
+        </h1>
         <input
-          className="border-2 border-gray-400 p-2 mt-1 block w-[70%]"
+          className="border-2 border-gray-400 p-2 mt-1 block w-[70%] md:text-2xl"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search user by email or name"
@@ -246,22 +250,22 @@ const EditGroupPage = () => {
       </div>
 
       <div>
-        <h2 className="text-xl font-semibold mt-4 pb-2">
+        <h2 className="text-xl font-semibold mt-4 pb-2 md:text-3xl">
           Current Participants:
         </h2>
-        <ul className="mt-2 space-y-2">
+        <ul className="mt-2 space-y-2 md:space-y-4">
           {selectedFriends.map((friend) => (
             <li key={friend._id} className="flex items-center w-[100%] p-2">
               <img
                 src={friend.picture}
                 alt={friend.name}
-                className="w-6 h-6 rounded-full"
+                className="w-6 h-6 rounded-full md:w-7 md:h-7 md:mr-2"
               />
-              <span className="ml-2">{friend.name}</span>
+              <span className="ml-2 md:text-2xl">{friend.name}</span>
               {group?.createdBy._id === currentUser._id && (
                 <button
                   type="button"
-                  className=" text-red-500 ml-auto p-1 rounded cursor-pointer"
+                  className=" text-red-500 ml-auto p-1 rounded cursor-pointer md:text-2xl"
                   onClick={() => removeFriendFromGroup(friend)}
                 >
                   remove
@@ -274,7 +278,7 @@ const EditGroupPage = () => {
 
       {pendingRequests.length > 0 && (
         <div>
-          <h2 className="text-xl font-semibold mt-4 pb-2">
+          <h2 className="text-xl font-semibold mt-4 pb-2 md:text-2xl">
             Pending Invitations:
           </h2>
           <ul className="mt-2 space-y-2">
@@ -295,7 +299,7 @@ const EditGroupPage = () => {
 
       {newInvites.length > 0 && (
         <div>
-          <h2 className="text-xl font-semibold mt-4 pb-2">
+          <h2 className="text-xl font-semibold mt-4 pb-2 md:text-2xl">
             New Invitations to be Sent:
           </h2>
           <ul className="mt-2 space-y-2">
@@ -322,17 +326,17 @@ const EditGroupPage = () => {
       )}
 
       {error && <span className="text-red-500 mt-1 text-2xl">{error}</span>}
-      <div className="flex flex-col gap-2 pt-4">
+      <div className="flex flex-col gap-2 pt-4 md:gap-3 md:pt-8">
         <button
           type="submit"
-          className="bg-[#2F5A62] text-white p-2 rounded text-xl"
+          className="bg-[#2F5A62] text-white p-2 rounded text-xl md:text-2xl"
         >
           Update
         </button>
         <button
           type="button"
           onClick={handleDeleteGroup}
-          className="bg-[#e03535] text-white p-2 rounded text-xl"
+          className="bg-[#e03535] text-white p-2 rounded text-xl md:text-2xl"
         >
           Delete Group
         </button>

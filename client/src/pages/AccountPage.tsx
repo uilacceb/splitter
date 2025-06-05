@@ -17,27 +17,26 @@ const AccountPage = () => {
   return (
     <div className="p-6 ">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold mb-4 pt-6">
+        <h1 className="text-2xl font-semibold mb-4 pt-6 md:text-3xl">
           Welcome {user?.name.split(" ")[0]}!
         </h1>
         <button
           onClick={handleLogout}
-          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 inline"
+          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 inline md:text-2xl"
         >
           Logout
         </button>
       </div>
-
-      <p>
-        You have {counts.total} request(s)
+      <div className="flex items-center justify-between md:mt-10">
+        <p className="md:text-2xl flex">You have {counts.total} request(s)</p>
         <button
-          className="flex items-center gap-2 px-4 py-2 bg-[#39625C] text-white rounded hover:bg-[#83A99B] transition duration-300"
+          className="flex items-center gap-2 px-4 py-2 bg-[#39625C] text-white rounded hover:bg-[#83A99B] transition duration-300 md:text-2xl"
           type="button"
           onClick={() => navigate("/requests")}
         >
           Check requests
         </button>
-      </p>
+      </div>
     </div>
   );
 };

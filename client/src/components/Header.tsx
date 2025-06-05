@@ -6,7 +6,7 @@ const Header = () => {
   const { counts } = useRequestCounts();
 
   return (
-    <div className="flex justify-evenly items-center bg-[#39625C] text-white p-6 text-xl">
+    <div className="flex justify-evenly items-center bg-[#39625C] text-white p-6 text-xl md:text-3xl md:p-10">
       <div className="relative">
         <p className="cursor-pointer" onClick={() => navigate("/friends")}>
           Friends

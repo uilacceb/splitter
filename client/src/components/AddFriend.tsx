@@ -7,7 +7,7 @@ const AddFriend = () => {
   return (
     <div className="pt-[1rem] flex justify-end pb-[0.3rem] pr-[1rem]">
       <button
-        className="flex items-center gap-2 px-4 py-2 bg-[#39625C] text-white rounded hover:bg-[#83A99B] transition duration-300"
+        className="flex items-center gap-2 px-4 py-2 bg-[#39625C] text-white rounded-md hover:bg-[#83A99B] transition duration-300 md:text-2xl "
         type="button"
         onClick={() => navigate("/add-friend")}
       >

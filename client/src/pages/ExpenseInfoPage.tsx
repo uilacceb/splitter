@@ -57,7 +57,7 @@ const ExpenseInfoPage = () => {
   return (
     <div className="p-6 relative">
       <GoBack />
-      <h1 className="text-3xl font-semibold text-center mb-8 mt-8">
+      <h1 className="text-3xl font-semibold text-center mb-8 mt-8 md:text-4xl">
         Expense Details
       </h1>
 
@@ -66,8 +66,8 @@ const ExpenseInfoPage = () => {
         <div className="flex items-center gap-3 pb-4">
           <Notebook className="text-slate-600" />
           <div>
-            <p className="text-lg text-gray-600">Description</p>
-            <p className="text-xl font-bold">{expense.description}</p>
+            <p className="text-lg text-gray-600 md:text-2xl">Description</p>
+            <p className="text-xl font-bold md:text-2xl">{expense.description}</p>
           </div>
         </div>
 
@@ -75,7 +75,7 @@ const ExpenseInfoPage = () => {
         <div className="flex items-center gap-3 pb-4">
           <DollarSign className="text-slate-600" />
           <div>
-            <p className="text-lg text-gray-600">Amount</p>
+            <p className="text-lg text-gray-600 md:text-2xl">Amount</p>
             <p className="text-2xl font-bold text-green-700">
               ${expense.amount.toFixed(2)}
             </p>
@@ -89,11 +89,11 @@ const ExpenseInfoPage = () => {
             <img
               src={expense.paidBy.picture}
               alt={expense.paidBy.name}
-              className="w-8 h-8 rounded-full"
+              className="w-8 h-8 rounded-full md:w-10 md:h-10"
             />
             <div>
-              <p className="text-sm text-gray-600">Paid by</p>
-              <p className="font-medium">{expense.paidBy.name}</p>
+              <p className="text-sm text-gray-600 md:text-2xl">Paid by</p>
+              <p className="font-medium md:text-2xl">{expense.paidBy.name}</p>
             </div>
           </div>
         </div>
@@ -102,13 +102,13 @@ const ExpenseInfoPage = () => {
         <div>
           <div className="flex items-center gap-3 mb-4">
             <Users className="text-slate-600" />
-            <p className="text-lg text-gray-700 font-semibold">
+            <p className="text-lg text-gray-700 font-semibold md:text-2xl">
               Participants ({expense.splitWith.length})
             </p>
           </div>
-          <ul className="space-y-2">
+          <ul className="space-y-2 md:space-y-4">
             {expense.splitWith.map((p) => (
-              <li key={p._id} className="flex items-center gap-3 pb-3">
+              <li key={p._id} className="flex items-center gap-3 pb-3 md:text-xl">
                 <img
                   src={p.picture}
                   alt={p.name}
@@ -121,7 +121,7 @@ const ExpenseInfoPage = () => {
         </div>
 
         {/* Created Date */}
-        <div className="flex items-center gap-3 text-sm text-gray-500 pt-4 border-t">
+        <div className="flex items-center gap-3 text-sm text-gray-500 pt-4 border-t md:text-2xl">
           <Calendar />
           Created on:{" "}
           {new Date(expense.createdAt).toLocaleDateString(undefined, {
@@ -134,7 +134,7 @@ const ExpenseInfoPage = () => {
 
       <div className="mt-6 text-center">
         <button
-          className={`px-6 py-2 rounded ${
+          className={`px-6 py-2 rounded md:text-2xl ${
             isOwner
               ? "bg-[#39625C] text-white hover:bg-[#4c7e71]"
               : "bg-gray-300 text-gray-500 cursor-not-allowed"

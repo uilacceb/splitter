@@ -6,7 +6,7 @@ const GoBack = () => {
   const navigate = useNavigate();
   return (
     <div
-      className="absolute top-2 left-2 cursor-pointer text-[#8d938f]"
+      className="absolute top-2 left-2 cursor-pointer text-[#8d938f] md:text-2xl"
       onClick={() => navigate(-1)}
     >
       <ArrowLeft className="inline" />
