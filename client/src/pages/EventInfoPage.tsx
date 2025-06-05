@@ -29,15 +29,26 @@ type Expense = {
 };
 
 const EventInfoPage = () => {
-  const { eventId, groupId } = useParams<{ eventId: string; groupId: string }>();
+  const { eventId, groupId } = useParams<{
+    eventId: string;
+    groupId: string;
+  }>();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [eventTitle, setEventTitle] = useState("");
   const [settlements, setSettlements] = useState<Settlement[]>([]);
-  const [transactionSummary, setTransactionSummary] = useState<Transaction[]>([]);
+  const [transactionSummary, setTransactionSummary] = useState<Transaction[]>(
+    []
+  );
+  const [settleErrors, setSettleErrors] = useState<{ [id: string]: string }>(
+    {}
+  );
   const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
-  function settlementsToTransactions(settlements: Settlement[], currentUserId: string): Transaction[] {
+  function settlementsToTransactions(
+    settlements: Settlement[],
+    currentUserId: string
+  ): Transaction[] {
     const transactions: Transaction[] = [];
     settlements.forEach((s) => {
       if (s.from._id === currentUserId) {
@@ -97,16 +108,28 @@ const EventInfoPage = () => {
 
   useEffect(() => {
     setTransactionSummary(
-      settlementsToTransactions(settlements.filter((s) => !s.settled), currentUser._id)
+      settlementsToTransactions(
+        settlements.filter((s) => !s.settled),
+        currentUser._id
+      )
     );
   }, [settlements, currentUser._id]);
 
   const handleSettle = async (id: string) => {
     try {
-      await axios.put(`/api/settlements/${id}/settle`, { settled: true });
-      const res = await axios.get(`/api/settlements?eventId=${eventId}`);
-      setSettlements(res.data);
-      window.dispatchEvent(new Event("settlementsChanged")); // <-- NEW: notify others
+      const res = await axios.put(`/api/settlements/${id}/settle`, {
+        settled: true,
+        userId: currentUser._id,
+      });
+
+      if (res.data && res.data.success === false && res.data.error) {
+        alert(res.data.error);
+        return;
+      }
+
+      const updated = await axios.get(`/api/settlements?eventId=${eventId}`);
+      setSettlements(updated.data);
+      window.dispatchEvent(new Event("settlementsChanged"));
     } catch (error) {
       alert("Failed to settle transaction");
     }
@@ -114,10 +137,19 @@ const EventInfoPage = () => {
 
   const handleUnsettle = async (id: string) => {
     try {
-      await axios.put(`/api/settlements/${id}/settle`, { settled: false });
-      const res = await axios.get(`/api/settlements?eventId=${eventId}`);
-      setSettlements(res.data);
-      window.dispatchEvent(new Event("settlementsChanged")); // <-- NEW: notify others
+      const res = await axios.put(`/api/settlements/${id}/settle`, {
+        settled: false,
+        userId: currentUser._id,
+      });
+
+      if (res.data && res.data.success === false && res.data.error) {
+        alert(res.data.error);
+        return;
+      }
+
+      const updated = await axios.get(`/api/settlements?eventId=${eventId}`);
+      setSettlements(updated.data);
+      window.dispatchEvent(new Event("settlementsChanged"));
     } catch (error) {
       alert("Failed to unsettle transaction");
     }
@@ -137,7 +169,7 @@ const EventInfoPage = () => {
       setExpenses((prev) => prev.filter((e) => e._id !== expenseId));
       const res = await axios.get(`/api/settlements?eventId=${eventId}`);
       setSettlements(res.data);
-      window.dispatchEvent(new Event("settlementsChanged")); // <-- NEW: notify others
+      window.dispatchEvent(new Event("settlementsChanged"));
     } catch (error) {
       alert("Failed to delete expense. Please try again.");
     }
@@ -180,7 +212,9 @@ const EventInfoPage = () => {
 
       {/* Unsettled Transactions */}
       <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-2 md:text-2xl">Unsettled Transactions:</h3>
+        <h3 className="text-lg font-semibold mb-2 md:text-2xl">
+          Unsettled Transactions:
+        </h3>
         {unsettled.length === 0 ? (
           <p className="md:text-2xl">No unsettled transactions.</p>
         ) : (
@@ -212,13 +246,15 @@ const EventInfoPage = () => {
                     ${tx.amount.toFixed(2)}
                   </span>
                 </div>
-                <button
-                  className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                  onClick={() => handleSettle(tx._id)}
-                  disabled={tx.settled}
-                >
-                  Settle
-                </button>
+                <div>
+                  <button
+                    className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    onClick={() => handleSettle(tx._id)}
+                    disabled={tx.settled}
+                  >
+                    Settle
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
@@ -259,13 +295,15 @@ const EventInfoPage = () => {
                     ${tx.amount.toFixed(2)}
                   </span>
                 </div>
-                <button
-                  className="px-3 py-1 bg-gray-400 text-white rounded hover:bg-gray-600"
-                  onClick={() => handleUnsettle(tx._id)}
-                  disabled={!tx.settled}
-                >
-                  Unsettle
-                </button>
+                <div>
+                  <button
+                    className="px-3 py-1 bg-gray-400 text-white rounded hover:bg-gray-600"
+                    onClick={() => handleUnsettle(tx._id)}
+                    disabled={!tx.settled}
+                  >
+                    Unsettle
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
@@ -299,7 +337,9 @@ const EventInfoPage = () => {
                   className="w-10 h-10 rounded-full "
                 />
                 <div>
-                  <p className="text-lg font-semibold md:text-2xl">{expense.description}</p>
+                  <p className="text-lg font-semibold md:text-2xl">
+                    {expense.description}
+                  </p>
                   <p className="text-sm text-gray-600 md:text-lg">
                     Paid by {expense.paidBy.name}
                   </p>

@@ -61,13 +61,15 @@ const ExpenseInfoPage = () => {
         Expense Details
       </h1>
 
-      <div className="bg-white shadow-md rounded-lg p-6 space-y-6 border max-w-2xl mx-auto">
+      <div className="bg-white shadow-md rounded-lg p-6 space-y-6 border max-w-2xl mx-auto md:space-y-12">
         {/* Title */}
         <div className="flex items-center gap-3 pb-4">
           <Notebook className="text-slate-600" />
           <div>
             <p className="text-lg text-gray-600 md:text-2xl">Description</p>
-            <p className="text-xl font-bold md:text-2xl">{expense.description}</p>
+            <p className="text-xl font-bold md:text-2xl">
+              {expense.description}
+            </p>
           </div>
         </div>
 
@@ -108,7 +110,10 @@ const ExpenseInfoPage = () => {
           </div>
           <ul className="space-y-2 md:space-y-4">
             {expense.splitWith.map((p) => (
-              <li key={p._id} className="flex items-center gap-3 pb-3 md:text-xl">
+              <li
+                key={p._id}
+                className="flex items-center gap-3 pb-3 md:text-xl"
+              >
                 <img
                   src={p.picture}
                   alt={p.name}

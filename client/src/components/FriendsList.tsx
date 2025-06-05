@@ -33,12 +33,12 @@ const FriendsList = () => {
 
   return (
     <div className="pl-10">
-      <div className="relative w-[80%] md:text-3xl md:pb-4">
+      <div className="relative w-[80%] md:text-2xl md:pb-4">
         <h2 onClick={() => navigate("/requests")} className="cursor-pointer">
           Friends ({friends.length})
         </h2>
         {counts.friend > 0 && (
-          <div className="w-[6px] h-[6px] bg-red-500 rounded blur-[0.6px] absolute top-[2px] left-[4.5rem] md:left-[8.3rem] md:w-[7px] md:h-[7px]"></div>
+          <div className="w-[6px] h-[6px] bg-red-500 rounded blur-[0.6px] absolute top-[2px] left-[4.5rem] md:left-[7rem] md:w-[7px] md:h-[7px]"></div>
         )}
       </div>
 

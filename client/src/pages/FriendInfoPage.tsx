@@ -78,7 +78,7 @@ const FriendInfoPage = () => {
     }
   };
 
-  if (!friend) return <p className="p-4">Loading...</p>;
+  if (!friend) return <p className="p-4 md:text-2xl">Loading...</p>;
 
   const hasSentRequest = sentRequests.includes(friendId!);
 

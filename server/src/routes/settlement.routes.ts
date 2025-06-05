@@ -24,18 +24,36 @@ settlementRouter.get("/", async (req, res) => {
 // PUT: Settle or unsettle a transaction
 settlementRouter.put("/:id/settle", async (req: any, res: any) => {
   try {
-    const { settled } = req.body; // settled: true/false
+    const { settled, userId } = req.body;
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required" });
+    }
+
     const settlement = await Settlement.findById(req.params.id);
     if (!settlement) {
       return res.status(404).json({ message: "Settlement not found" });
     }
+
+    // Allow only relevant users
+    if (
+      settlement.from.toString() !== userId &&
+      settlement.to.toString() !== userId
+    ) {
+      // Respond with 200, but with an error message (not 403)
+      return res.json({
+        success: false,
+        error: "You are not allowed to settle/unsettle this transaction.",
+      });
+    }
+
     settlement.settled = settled === undefined ? true : settled;
     await settlement.save();
-    // Regenerate settlements for this event (to merge/unmerge debts)
     await generateSettlements(new mongoose.Types.ObjectId(settlement.eventId));
-    res.json(settlement);
+    res.json({ success: true, settlement });
   } catch (err) {
-    res.status(500).json({ message: "Failed to settle/unsettle transaction" });
+    res
+      .status(500)
+      .json({ success: false, error: "Failed to settle/unsettle transaction" });
   }
 });
 

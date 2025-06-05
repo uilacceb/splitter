@@ -93,7 +93,7 @@ const GroupInfoPage = () => {
         className="w-16 h-16 rounded-full my-4 mx-auto md:w-18 md:h-18"
       />
       <h2 className="text-2xl font-semibold text-center md:text-3xl">
-        {group.title}{" "}
+        {group.title}
         <PencilLine
           color="#bcc2be"
           className="cursor-pointer inline ml-2"

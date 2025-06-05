@@ -15,7 +15,7 @@ const GroupList = ({ groups }: { groups: Group[] }) => {
   return (
     <div className="pl-10 mt-8">
       <div className="relative w-[80%]">
-        <h2 className="md:text-3xl" onClick={() => navigate("/requests")}>
+        <h2 className="md:text-2xl" onClick={() => navigate("/requests")}>
           Groups ({groups.length})
         </h2>
         {counts.group > 0 && (
@@ -32,12 +32,12 @@ const GroupList = ({ groups }: { groups: Group[] }) => {
             <img
               src={group.icon || "/default-group-icon.png"}
               alt={group.title}
-              className="w-8 h-8 rounded-full mr-2 md:w-12 md:h-12"
+              className="w-8 h-8 rounded-full mr-2 md:w-10 md:h-10"
             />
             <div>
-              <p className="md:text-2xl">{group.title}</p>
+              <p className="md:text-xl">{group.title}</p>
               {group.members && (
-                <p className="text-xs text-gray-500 md:text-2xl">
+                <p className="text-xs text-gray-500 md:text-xl">
                   {group.members.length} members
                 </p>
               )}

@@ -115,7 +115,7 @@ const EditExpensePage = () => {
   }
 
   return (
-    <div className="p-4 relative">
+    <div className="p-4 relative md:p-8">
       <GoBack />
       <h2 className="text-2xl font-semibold mb-4 mt-8 md:text-3xl md:mt-12">
         Edit Expense
@@ -171,7 +171,7 @@ const EditExpensePage = () => {
             <p className="mb-1 font-medium md:text-2xl md:font-semibold">
               Select Participants:
             </p>
-            <ul className="space-y-2">
+            <ul className="space-y-2 md:space-y-4">
               {participants.map((p) => {
                 const isSelected = selectedIds.includes(p._id);
                 return (
