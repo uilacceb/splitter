@@ -1,42 +1,56 @@
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
-import { useEffect, useState, JSX } from "react";
+import { useEffect, useState, JSX, useRef } from "react";
 import { Annoyed, Smile, Laugh } from "lucide-react";
-
-// WIDER slider, same height
-const SLIDER_WIDTH = 460; // was 420
-const HANDLE_SIZE = 64;
 
 type Props = {
   onComplete: () => void;
   text?: string;
 };
 
+const SLIDER_HEIGHT = 56; // px (use clamp for font if you like)
+const HANDLE_SIZE = SLIDER_HEIGHT; // keep handle a circle, always as tall as slider
+
 const SlideToLoginButton = ({
   onComplete,
   text = "Slide to Login with Google",
 }: Props) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [sliderWidth, setSliderWidth] = useState(0);
+
+  // Measure actual slider width
+  useEffect(() => {
+    const measure = () => {
+      if (containerRef.current)
+        setSliderWidth(containerRef.current.offsetWidth);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
   const x = useMotionValue(0);
-  const progress = useTransform(x, [0, SLIDER_WIDTH - HANDLE_SIZE], [0, 1]);
+  const progress = useTransform(x, [0, sliderWidth - HANDLE_SIZE], [0, 1]);
   const [emoji, setEmoji] = useState<JSX.Element>(
-    <Annoyed size={32} color="#83A99B" />
+    <Annoyed size={SLIDER_HEIGHT / 2} color="#83A99B" />
   );
 
   useEffect(() => {
     x.set(0);
-  }, [x]);
+  }, [x, sliderWidth]); // re-zero if width changes
 
   useEffect(() => {
     return progress.on("change", (p) => {
-      if (p > 0.85) setEmoji(<Laugh size={32} color="#83A99B" />);
-      else if (p > 0.35) setEmoji(<Smile size={32} color="#83A99B" />);
-      else setEmoji(<Annoyed size={32} color="#83A99B" />);
+      if (p > 0.85)
+        setEmoji(<Laugh size={SLIDER_HEIGHT / 2} color="#83A99B" />);
+      else if (p > 0.35)
+        setEmoji(<Smile size={SLIDER_HEIGHT / 2} color="#83A99B" />);
+      else setEmoji(<Annoyed size={SLIDER_HEIGHT / 2} color="#83A99B" />);
     });
   }, [progress]);
 
-  // Change: threshold is right at end (no -20)
   function handleDragEnd(_: any, info: any) {
     const dragX = x.get();
-    const threshold = SLIDER_WIDTH - HANDLE_SIZE; // Snap right to the end
+    const threshold = sliderWidth - HANDLE_SIZE;
     if (dragX >= threshold) {
       animate(x, threshold, {
         type: "spring",
@@ -50,20 +64,15 @@ const SlideToLoginButton = ({
   }
 
   const renderBouncyText = (t: string) => {
-    // Get progress only ONCE per render
     const p = progress.get();
-
     return t.split("").map((char, idx) => {
       const pct = idx / (t.length - 1 || 1);
       const bounceRange = 0.12;
       let lift = 0;
-
-      // Only apply bounce when NOT completed
       if (p > 0.01 && p < 0.999) {
         const diff = Math.abs(p - pct);
         lift = diff < bounceRange ? -18 * (1 - diff / bounceRange) : 0;
       }
-
       return (
         <motion.span
           key={idx}
@@ -78,7 +87,7 @@ const SlideToLoginButton = ({
           style={{
             color: "#83A99B",
             fontWeight: 700,
-            fontSize: "1.7rem",
+            fontSize: "clamp(1.1rem, 4vw, 1.5rem)",
             letterSpacing: 0.5,
           }}
         >
@@ -89,12 +98,14 @@ const SlideToLoginButton = ({
   };
 
   return (
-    <div className="fancy-bg min-h-screen flex items-center justify-center">
+    <div className="fancy-bg min-h-screen flex items-center justify-center px-2">
       <div
+        ref={containerRef}
         className="relative"
         style={{
-          width: SLIDER_WIDTH + "px",
-          height: "72px", // not taller!
+          width: "75vw",
+          maxWidth: 460, // or any desktop max (e.g. 460~500)
+          height: SLIDER_HEIGHT,
           borderRadius: "9999px",
           background: "#fff",
           boxShadow: "0 8px 32px rgba(0,0,0,0.11)",
@@ -109,7 +120,7 @@ const SlideToLoginButton = ({
         <motion.div
           className="absolute top-1/2 left-0 z-10"
           drag="x"
-          dragConstraints={{ left: 0, right: SLIDER_WIDTH - HANDLE_SIZE }}
+          dragConstraints={{ left: 0, right: sliderWidth - HANDLE_SIZE }}
           style={{
             x,
             width: HANDLE_SIZE,
@@ -122,6 +133,7 @@ const SlideToLoginButton = ({
             justifyContent: "center",
             cursor: "grab",
             y: "-50%",
+            zIndex: 10,
           }}
           whileTap={{ scale: 1.07 }}
           animate={{
@@ -144,13 +156,14 @@ const SlideToLoginButton = ({
           style={{
             color: "#83A99B",
             fontWeight: 700,
-            fontSize: "1.7rem",
+            fontSize: "clamp(1.1rem, 4vw, 1.5rem)",
             letterSpacing: 0.5,
             fontFamily: "inherit",
-            paddingLeft: `${HANDLE_SIZE + 16}px`, // handle + small gap
+            paddingLeft: `calc(${HANDLE_SIZE}px + 2vw)`, // handle + responsive gap
             boxSizing: "border-box",
             textAlign: "left",
-            lineHeight: "72px", // vertically center text
+            lineHeight: `${SLIDER_HEIGHT}px`,
+            transition: "padding-left .2s", // smooth on resize
           }}
         >
           {renderBouncyText(text)}
