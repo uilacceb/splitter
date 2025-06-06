@@ -26,7 +26,7 @@ const FriendsPage = () => {
   const fetchTransactions = useCallback(async () => {
     try {
       const txRes = await axios.get(
-        `/api/users/friends/summary?userId=${currentUser._id}`
+        `${process.env.REACT_APP_BACKEND_URL}/api/users/friends/summary?userId=${currentUser._id}`
       );
       const txs = txRes.data;
       setTransactions(txs);
@@ -39,7 +39,7 @@ const FriendsPage = () => {
     const fetchFriendsAndTransactions = async () => {
       try {
         const res = await axios.get(
-          `/api/users/friends?userId=${currentUser._id}`
+          `${process.env.REACT_APP_BACKEND_URL}/api/users/friends?userId=${currentUser._id}`
         );
         setFriends(res.data);
         await fetchTransactions();

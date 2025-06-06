@@ -37,8 +37,8 @@ const Requests = () => {
     const fetchRequests = async () => {
       try {
         const [friendRes, groupRes] = await Promise.all([
-          axios.get(`/api/users/friends/requests?userId=${currentUser._id}`),
-          axios.get(`/api/groups/requests?userId=${currentUser._id}`),
+          axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/users/friends/requests?userId=${currentUser._id}`),
+          axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/groups/requests?userId=${currentUser._id}`),
         ]);
 
         setFriendRequests(friendRes.data);
@@ -58,7 +58,7 @@ const Requests = () => {
 
   const acceptFriend = async (id: string) => {
     try {
-      await axios.put(`/api/users/friends/requests/${id}/accept`);
+      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/users/friends/requests/${id}/accept`);
       setFriendRequests((prev) => prev.filter((req) => req._id !== id));
       refreshCounts();
     } catch (error) {
@@ -68,7 +68,7 @@ const Requests = () => {
 
   const ignoreFriend = async (id: string) => {
     try {
-      await axios.delete(`/api/users/friends/requests/${id}`);
+      await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/users/friends/requests/${id}`);
       setFriendRequests((prev) => prev.filter((req) => req._id !== id));
       refreshCounts();
     } catch (error) {
@@ -78,7 +78,7 @@ const Requests = () => {
 
   const acceptGroup = async (id: string) => {
     try {
-      await axios.put(`/api/groups/requests/${id}/accept`);
+      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/groups/requests/${id}/accept`);
       setGroupRequests((prev) => prev.filter((req) => req._id !== id));
       refreshCounts();
     } catch (error) {
@@ -88,7 +88,7 @@ const Requests = () => {
 
   const ignoreGroup = async (id: string) => {
     try {
-      await axios.delete(`/api/groups/requests/${id}`);
+      await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/groups/requests/${id}`);
       setGroupRequests((prev) => prev.filter((req) => req._id !== id));
       refreshCounts();
     } catch (error) {

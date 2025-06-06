@@ -20,7 +20,7 @@ const FriendsList = () => {
       const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
       try {
         const res = await axios.get(
-          `/api/users/friends?userId=${currentUser._id}`
+          `${process.env.REACT_APP_BACKEND_URL}/api/users/friends?userId=${currentUser._id}`
         );
         setFriends(res.data);
       } catch (error) {

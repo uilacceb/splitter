@@ -23,7 +23,9 @@ const AddExpensePage = () => {
   useEffect(() => {
     const fetchGroupMembers = async () => {
       try {
-        const res = await axios.get(`/api/groups/${groupId}`);
+        const res = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}`
+        );
         setParticipants(res.data.members);
       } catch (err) {
         console.error("Failed to load group members", err);
@@ -59,7 +61,7 @@ const AddExpensePage = () => {
     }
 
     try {
-      await axios.post("/api/expenses", {
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/expenses`, {
         eventId,
         paidBy: currentUser._id,
         description,

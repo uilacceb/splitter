@@ -48,7 +48,7 @@ const EditGroupPage = () => {
   useEffect(() => {
     const fetchGroup = async () => {
       try {
-        const res = await axios.get(`/api/groups/${groupId}`);
+        const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}`);
         setGroup(res.data);
         setGroupName(res.data.title);
         setRandomIcon(res.data.icon);
@@ -64,7 +64,7 @@ const EditGroupPage = () => {
     const fetchFriends = async () => {
       try {
         const res = await axios.get(
-          `/api/users/friends?userId=${currentUser._id}`
+          `${process.env.REACT_APP_BACKEND_URL}/api/users/friends?userId=${currentUser._id}`
         );
         setFriends(res.data);
       } catch (error) {
@@ -77,7 +77,7 @@ const EditGroupPage = () => {
   useEffect(() => {
     const fetchPendingRequests = async () => {
       try {
-        const res = await axios.get(`/api/groups/${groupId}/pending-requests`);
+        const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}/pending-requests`);
         setPendingRequests(res.data);
       } catch (err) {
         console.error("Failed to fetch pending requests", err);
@@ -108,7 +108,7 @@ const EditGroupPage = () => {
   const removeFriendFromGroup = async (friend: Friend) => {
     if (group?.createdBy._id !== currentUser._id) return;
     try {
-      await axios.put(`/api/groups/${groupId}/members/remove`, {
+      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}/members/remove`, {
         userId: friend._id,
       });
       setSelectedFriends((prev) => prev.filter((f) => f._id !== friend._id));
@@ -132,7 +132,7 @@ const EditGroupPage = () => {
     }
 
     try {
-      await axios.put(`/api/groups/${groupId}/edit`, {
+      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}/edit`, {
         title: groupName,
         icon: randomIcon,
         userId: currentUser._id,
@@ -140,7 +140,7 @@ const EditGroupPage = () => {
 
       // Send invitations to new invites
       for (const friend of newInvites) {
-        await axios.post(`/api/groups/${groupId}/invite`, {
+        await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}/invite`, {
           toUserId: friend._id,
           fromUserId: currentUser._id,
         });
@@ -171,7 +171,7 @@ const EditGroupPage = () => {
     if (!confirmed) return;
 
     try {
-      await axios.delete(`/api/groups/${groupId}`);
+      await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}`);
       alert("Group deleted successfully");
       navigate("/groups");
     } catch (err) {

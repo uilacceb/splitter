@@ -31,7 +31,7 @@ const AddFriendsPage = () => {
 
       setLoading(true);
       try {
-        const res = await axios.get(`/api/users/search?query=${query}`);
+        const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/users/search?query=${query}`);
         if (res.data.length > 0) {
           setResults(res.data);
           setNotFound(false);
@@ -59,7 +59,7 @@ const AddFriendsPage = () => {
     setError("");
     try {
       const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-      await axios.post(`/api/users/friends/request`, {
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/users/friends/request`, {
         to: userId,
         from: currentUser._id,
       }); // you need this endpoint

@@ -27,10 +27,10 @@ const EditEventPage = () => {
   useEffect(() => {
     const fetchEventAndMembers = async () => {
       try {
-        const groupRes = await axios.get(`/api/groups/${groupId}`);
+        const groupRes = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}`);
         setMembers(groupRes.data.members);
 
-        const eventRes = await axios.get(`/api/events/${eventId}`);
+        const eventRes = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/events/${eventId}`);
         const event = eventRes.data;
         setTitle(event.title);
         setDate(event.date.split("T")[0]); // format date
@@ -61,7 +61,7 @@ const EditEventPage = () => {
     }
 
     try {
-      await axios.put(`/api/events/${eventId}`, {
+      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/events/${eventId}`, {
         title,
         date,
         participants: selectedParticipants,

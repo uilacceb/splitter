@@ -22,7 +22,7 @@ const LoginPage = () => {
             },
           }
         );
-        const res = await axios.post("/api/users/google-auth", {
+        const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/users/google-auth`, {
           email: data.email,
           name: data.name,
           picture: data.picture,

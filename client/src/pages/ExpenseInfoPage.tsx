@@ -38,7 +38,7 @@ const ExpenseInfoPage = () => {
   useEffect(() => {
     const fetchExpense = async () => {
       try {
-        const res = await axios.get(`/api/expenses/${expenseId}`);
+        const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/expenses/${expenseId}`);
         setExpense(res.data);
       } catch (err) {
         console.error("Failed to fetch expense", err);

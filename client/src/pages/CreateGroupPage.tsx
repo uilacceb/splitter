@@ -33,7 +33,7 @@ const CreateGroupPage = () => {
       const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
       try {
         const res = await axios.get(
-          `/api/users/friends?userId=${currentUser._id}`
+          `${process.env.REACT_APP_BACKEND_URL}/api/users/friends?userId=${currentUser._id}`
         );
         setFriends(res.data);
       } catch (error) {
@@ -92,7 +92,7 @@ const CreateGroupPage = () => {
 
     console.log("Payload being sent:", payload);
     try {
-      const res = await axios.post("/api/groups", payload);
+      const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/groups`, payload);
       alert("Group created successfully!");
       navigate(`/groups`);
       setGroupName("");

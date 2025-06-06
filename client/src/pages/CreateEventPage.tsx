@@ -26,7 +26,7 @@ const CreateEventPage = () => {
   useEffect(() => {
     const fetchGroup = async () => {
       try {
-        const res = await axios.get(`/api/groups/${groupId}`);
+        const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}`);
         setMembers(res.data.members);
       } catch (err) {
         console.error("Failed to fetch group members", err);
@@ -53,7 +53,7 @@ const CreateEventPage = () => {
     }
 
     try {
-      await axios.post("/api/events", {
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/events`, {
         title,
         date,
         participants: selectedParticipants,

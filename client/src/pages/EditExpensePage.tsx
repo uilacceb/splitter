@@ -31,8 +31,8 @@ const EditExpensePage = () => {
       setIsLoading(true);
       try {
         const [groupRes, expenseRes] = await Promise.all([
-          axios.get(`/api/groups/${groupId}`),
-          axios.get(`/api/expenses/${expenseId}`),
+          axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}`),
+          axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/expenses/${expenseId}`),
         ]);
 
         const groupMembers = groupRes.data.members;
@@ -97,7 +97,7 @@ const EditExpensePage = () => {
     }
 
     try {
-      await axios.put(`/api/expenses/${expenseId}`, {
+      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/expenses/${expenseId}`, {
         description,
         amount: parseFloat(amount),
         splitWith: participantIds,

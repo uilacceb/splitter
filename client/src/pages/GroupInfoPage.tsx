@@ -33,7 +33,7 @@ const GroupInfoPage = () => {
 
   const fetchGroup = async () => {
     try {
-      const res = await axios.get(`/api/groups/${groupId}`);
+      const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}`);
       setGroup(res.data);
     } catch (error) {
       console.error("Failed to fetch group info", error);
@@ -42,7 +42,7 @@ const GroupInfoPage = () => {
 
   const fetchEvents = async () => {
     try {
-      const res = await axios.get(`/api/events?groupId=${groupId}`);
+      const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/events?groupId=${groupId}`);
       setEvents(res.data);
     } catch (error) {
       console.error("Failed to fetch events", error);
@@ -56,7 +56,7 @@ const GroupInfoPage = () => {
     if (!confirm) return;
 
     try {
-      await axios.delete(`/api/events/${eventId}`);
+      await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/events/${eventId}`);
       setEvents((prev) => prev.filter((e) => e._id !== eventId));
     } catch (error) {
       console.error("Failed to delete event", error);

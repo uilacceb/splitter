@@ -26,11 +26,11 @@ const FriendInfoPage = () => {
   useEffect(() => {
     const fetchFriendData = async () => {
       try {
-        const res = await axios.get(`/api/users/${friendId}`);
+        const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/users/${friendId}`);
         setFriend(res.data);
 
         const friendRes = await axios.get(
-          `/api/users/friends?userId=${currentUserId}`
+          `${process.env.REACT_APP_BACKEND_URL}/api/users/friends?userId=${currentUserId}`
         );
         const friendList: Friend[] = friendRes.data;
         const isAlreadyFriend = friendList.some((f) => f._id === friendId);
@@ -51,7 +51,7 @@ const FriendInfoPage = () => {
 
     try {
       await axios.delete(
-        `/api/users/friends/${friendId}?userId=${currentUserId}`
+        `${process.env.REACT_APP_BACKEND_URL}/api/users/friends/${friendId}?userId=${currentUserId}`
       );
       alert("Friend deleted");
       navigate("/friends");
@@ -64,7 +64,7 @@ const FriendInfoPage = () => {
   const sendFriendRequest = async () => {
     setError(null);
     try {
-      await axios.post(`/api/users/friends/request`, {
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/users/friends/request`, {
         to: friendId,
         from: currentUserId,
       });

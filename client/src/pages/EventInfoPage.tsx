@@ -73,7 +73,7 @@ const EventInfoPage = () => {
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
-        const res = await axios.get(`/api/events/${eventId}`);
+        const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/events/${eventId}`);
         setEventTitle(res.data.title);
       } catch (error) {
         console.error("Failed to fetch event title", error);
@@ -85,7 +85,7 @@ const EventInfoPage = () => {
   useEffect(() => {
     const fetchExpenses = async () => {
       try {
-        const res = await axios.get(`/api/expenses?eventId=${eventId}`);
+        const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/expenses?eventId=${eventId}`);
         setExpenses(res.data);
       } catch (error) {
         console.error("Failed to fetch expenses", error);
@@ -97,7 +97,7 @@ const EventInfoPage = () => {
   useEffect(() => {
     const fetchSettlements = async () => {
       try {
-        const res = await axios.get(`/api/settlements?eventId=${eventId}`);
+        const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/settlements?eventId=${eventId}`);
         setSettlements(res.data);
       } catch (error) {
         console.error("Failed to fetch settlements", error);
@@ -117,7 +117,7 @@ const EventInfoPage = () => {
 
   const handleSettle = async (id: string) => {
     try {
-      const res = await axios.put(`/api/settlements/${id}/settle`, {
+      const res = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/settlements/${id}/settle`, {
         settled: true,
         userId: currentUser._id,
       });
@@ -127,7 +127,7 @@ const EventInfoPage = () => {
         return;
       }
 
-      const updated = await axios.get(`/api/settlements?eventId=${eventId}`);
+      const updated = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/settlements?eventId=${eventId}`);
       setSettlements(updated.data);
       window.dispatchEvent(new Event("settlementsChanged"));
     } catch (error) {
@@ -137,7 +137,7 @@ const EventInfoPage = () => {
 
   const handleUnsettle = async (id: string) => {
     try {
-      const res = await axios.put(`/api/settlements/${id}/settle`, {
+      const res = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/settlements/${id}/settle`, {
         settled: false,
         userId: currentUser._id,
       });
@@ -147,7 +147,7 @@ const EventInfoPage = () => {
         return;
       }
 
-      const updated = await axios.get(`/api/settlements?eventId=${eventId}`);
+      const updated = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/settlements?eventId=${eventId}`);
       setSettlements(updated.data);
       window.dispatchEvent(new Event("settlementsChanged"));
     } catch (error) {
@@ -165,9 +165,9 @@ const EventInfoPage = () => {
     if (!confirmed) return;
 
     try {
-      await axios.delete(`/api/expenses/${expenseId}`);
+      await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/expenses/${expenseId}`);
       setExpenses((prev) => prev.filter((e) => e._id !== expenseId));
-      const res = await axios.get(`/api/settlements?eventId=${eventId}`);
+      const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/settlements?eventId=${eventId}`);
       setSettlements(res.data);
       window.dispatchEvent(new Event("settlementsChanged"));
     } catch (error) {

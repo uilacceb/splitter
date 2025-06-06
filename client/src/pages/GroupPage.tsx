@@ -10,7 +10,7 @@ const GroupPage = () => {
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
     axios
-      .get(`/api/groups?userId=${currentUser._id}`)
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/groups?userId=${currentUser._id}`)
       .then((res) => setGroups(res.data))
       .catch((err) => console.error("Error fetching groups", err));
   }, []);
