@@ -32,7 +32,7 @@ const FriendsList = () => {
   }, []);
 
   return (
-    <div className="pl-10">
+    <div className="pl-10 pb-8">
       <div className="relative w-[80%] md:text-2xl md:pb-4">
         <h2 onClick={() => navigate("/requests")} className="cursor-pointer">
           Friends ({friends.length})
