@@ -240,9 +240,9 @@ const EditGroupPage = () => {
                     alt={user.name}
                     className="w-6 h-6 rounded-full"
                   />
-                  <span>{user.name}</span>
+                  <span className="md:text-2xl">{user.name}</span>
                 </div>
-                <span className="text-sm text-gray-500">{user.email}</span>
+                <span className="text-sm text-gray-500 md:text-xl">{user.email}</span>
               </li>
             ))}
           </ul>
@@ -289,8 +289,8 @@ const EditGroupPage = () => {
                   alt={request.to.name}
                   className="w-6 h-6 rounded-full"
                 />
-                <span className="ml-2">{request.to.name}</span>
-                <span className="ml-4 text-gray-500">(Pending)</span>
+                <span className="ml-2 md:text-2xl">{request.to.name}</span>
+                <span className="ml-4 text-gray-500 md:text-xl">(Pending)</span>
               </li>
             ))}
           </ul>

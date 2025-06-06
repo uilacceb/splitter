@@ -20,33 +20,39 @@ const TransactionInfo = ({ transactions }: Props) => {
         Transactions Summary:
       </h2>
       <ul className="space-y-4">
-        {transactions.map((tx, idx) => (
-          <li
-            key={idx}
-            className="flex justify-between items-center border-b pb-2"
-          >
-            <div className="flex items-center gap-4 ">
-              <img
-                src={tx.picture || "/placeholder.jpg"}
-                alt={tx.name}
-                className="w-10 h-10 rounded-full bg-gray-200"
-              />
-              <p className="text-lg font-medium md:text-2xl">{tx.name}</p>
-            </div>
-            <div className="text-right">
-              <p className="text-sm text-gray-600 md:text-2xl">
-                {tx.amount < 0 ? "you owe" : "owes you"}
-              </p>
-              <p
-                className={`font-semibold md:text-2xl ${
-                  tx.amount < 0 ? "text-red-600" : "text-blue-600"
-                }`}
-              >
-                ${Math.abs(tx.amount).toFixed(2)}
-              </p>
-            </div>
-          </li>
-        ))}
+        {transactions.length === 0 ? (
+          <p className="text-gray-500 text-center md:text-2xl">
+            No transactions - You are all clear in this event!
+          </p>
+        ) : (
+          transactions.map((tx, idx) => (
+            <li
+              key={idx}
+              className="flex justify-between items-center border-b pb-2"
+            >
+              <div className="flex items-center gap-4 ">
+                <img
+                  src={tx.picture || "/placeholder.jpg"}
+                  alt={tx.name}
+                  className="w-10 h-10 rounded-full bg-gray-200"
+                />
+                <p className="text-lg font-medium md:text-2xl">{tx.name}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-600 md:text-2xl">
+                  {tx.amount < 0 ? "you owe" : "owes you"}
+                </p>
+                <p
+                  className={`font-semibold md:text-2xl ${
+                    tx.amount < 0 ? "text-red-600" : "text-blue-600"
+                  }`}
+                >
+                  ${Math.abs(tx.amount).toFixed(2)}
+                </p>
+              </div>
+            </li>
+          ))
+        )}
       </ul>
     </div>
   );

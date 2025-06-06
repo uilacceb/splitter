@@ -315,13 +315,13 @@ const EventInfoPage = () => {
         Expenses ({expenses.length}):
       </h2>
       {expenses.length === 0 ? (
-        <p>No expenses recorded for this event.</p>
+        <p className="md:text-2xl">No expenses recorded for this event.</p>
       ) : (
         <ul className="space-y-4">
           {expenses.map((expense) => (
             <li
               key={expense._id}
-              className="border rounded p-4 bg-gray-50 shadow-sm flex justify-between items-center "
+              className="border rounded p-4 bg-gray-50 shadow-sm flex justify-between items-center md:text-2xl"
             >
               <div
                 className="flex items-center gap-4 cursor-pointer "

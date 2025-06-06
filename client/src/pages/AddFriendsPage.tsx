@@ -124,7 +124,7 @@ const AddFriendsPage = () => {
       )}
 
       {!loading && notFound && (
-        <p className="mt-4 text-red-500">No user found.</p>
+        <p className="mt-4 text-red-500 md:text-2xl">No user found.</p>
       )}
     </div>
   );

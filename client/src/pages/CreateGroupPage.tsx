@@ -191,7 +191,7 @@ const CreateGroupPage = () => {
                       alt={user.name}
                       className="w-6 h-6 rounded-full"
                     />
-                    <span>{user.name}</span>
+                    <span className="md:text-2xl">{user.name}</span>
                   </div>
                   <span className="text-sm text-gray-500 md:text-2xl">{user.email}</span>
                 </li>
