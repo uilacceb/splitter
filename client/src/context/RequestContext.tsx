@@ -37,10 +37,10 @@ export const RequestProvider = ({
       }
 
       const [friendRes, groupRes] = await Promise.all([
-        fetch(`/api/users/friends/requests?userId=${userId}`).then((res) =>
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/users/friends/requests?userId=${userId}`).then((res) =>
           res.json()
         ),
-        fetch(`/api/groups/requests?userId=${userId}`).then((res) =>
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/groups/requests?userId=${userId}`).then((res) =>
           res.json()
         ),
       ]);
