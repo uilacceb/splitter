@@ -42,7 +42,7 @@ const FriendsList = () => {
         )}
       </div>
 
-      <div className="mt-2 space-y-4">
+      <div className="mt-2 space-y-4 md:pb-4">
         {friends.map((friend) => (
           <div
             key={friend._id}
