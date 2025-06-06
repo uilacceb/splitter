@@ -32,12 +32,16 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to Splitter Application" });
 });
 
-
 // Routes
 app.use("/api/expenses", expenseRouter);
 app.use("/api/users", userRouter);
 app.use("/api/groups", groupRouter);
 app.use("/api/events", eventRouter);
 app.use("/api/settlements", settlementRouter);
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 export default app;
