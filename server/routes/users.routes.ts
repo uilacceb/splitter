@@ -190,6 +190,9 @@ userRouter.get("/friends/summary", async (req: any, res: any) => {
   const { userId } = req.query;
   if (!userId) return res.status(400).json({ message: "userId is required" });
 
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({ message: "Invalid userId format" });
+  }
   try {
     const settlements = await Settlement.find({
       $or: [{ from: userId }, { to: userId }],

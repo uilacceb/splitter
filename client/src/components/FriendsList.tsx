@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRequestCounts } from "../context/RequestContext";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 type Friend = {
   _id: string;
@@ -14,13 +15,16 @@ const FriendsList = () => {
   const [friends, setFriends] = useState<Friend[]>([]);
   const { counts } = useRequestCounts();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
+    // Only fetch if user and user._id are available
+    if (!user || !user._id) return;
+
     const fetchFriends = async () => {
-      const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
       try {
         const res = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/users/friends?userId=${currentUser._id}`
+          `${process.env.REACT_APP_BACKEND_URL}/api/users/friends?userId=${user._id}`
         );
         setFriends(res.data);
       } catch (error) {
@@ -29,7 +33,7 @@ const FriendsList = () => {
     };
 
     fetchFriends();
-  }, []);
+  }, [user?._id]);
 
   return (
     <div className="pl-10 pb-8">

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import GoBack from "../components/GoBack";
 import { useRequestCounts } from "../context/RequestContext";
+import { useAuth } from "../context/AuthContext"; // <--- Import AuthContext
 
 type Friend = {
   _id: string;
@@ -20,13 +21,17 @@ const FriendInfoPage = () => {
   const { counts, refreshCounts } = useRequestCounts();
   const navigate = useNavigate();
 
-  const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-  const currentUserId = currentUser._id;
+  const { user } = useAuth(); // <--- Use context
+  const currentUserId = user?._id;
 
   useEffect(() => {
+    if (!currentUserId || !friendId) return; // Defensive check
+
     const fetchFriendData = async () => {
       try {
-        const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/users/${friendId}`);
+        const res = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/users/${friendId}`
+        );
         setFriend(res.data);
 
         const friendRes = await axios.get(
@@ -64,10 +69,13 @@ const FriendInfoPage = () => {
   const sendFriendRequest = async () => {
     setError(null);
     try {
-      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/users/friends/request`, {
-        to: friendId,
-        from: currentUserId,
-      });
+      await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/users/friends/request`,
+        {
+          to: friendId,
+          from: currentUserId,
+        }
+      );
       setSentRequests((prev) => [...prev, friendId!]);
       refreshCounts();
     } catch (err: any) {

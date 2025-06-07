@@ -7,7 +7,11 @@ type ProtectedRouteProps = {
 };
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  if (loading) {
+    // Show a spinner, skeleton, or nothing while auth is being restored
+    return <div>Loading...</div>;
+  }
   return user ? children : <Navigate to="/" replace />;
 };
 
