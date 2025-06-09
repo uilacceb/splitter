@@ -10,6 +10,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const { setUser } = useAuth();
   const { refreshCounts } = useRequestCounts();
+
   const handleLoginSuccess = async (credentialResponse: any) => {
     const decoded: any = jwtDecode(credentialResponse.credential);
     const res = await axios.post(
@@ -35,10 +36,9 @@ const LoginPage = () => {
         <GoogleLogin
           onSuccess={handleLoginSuccess}
           onError={() => console.log("Login Failed")}
-          auto_select={true}
           width="200px"
           cancel_on_tap_outside={true}
-          theme="filled_black"
+          shape="pill"
         />
       </div>
     </div>
