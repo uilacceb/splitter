@@ -12,12 +12,15 @@ const LoginPage = () => {
   const { refreshCounts } = useRequestCounts();
   const handleLoginSuccess = async (credentialResponse: any) => {
     const decoded: any = jwtDecode(credentialResponse.credential);
-    const res = await axios.post("/api/users/google-auth", {
-      email: decoded.email,
-      name: decoded.name,
-      picture: decoded.picture,
-      sub: decoded.sub, // unique Google ID
-    });
+    const res = await axios.post(
+      `${process.env.REACT_APP_BACKEND_URL}/api/users/google-auth`,
+      {
+        email: decoded.email,
+        name: decoded.name,
+        picture: decoded.picture,
+        sub: decoded.sub, // unique Google ID
+      }
+    );
 
     localStorage.setItem("user", JSON.stringify(res.data));
     refreshCounts();
