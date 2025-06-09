@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import GoBack from "../components/GoBack";
 import { useRequestCounts } from "../context/RequestContext";
-import { useAuth } from "../context/AuthContext"; // <--- Import AuthContext
+import { useAuth } from "../context/AuthContext";
 import { hashedEmail } from "../utils/functions";
 
 type Friend = {
@@ -19,16 +19,18 @@ const FriendInfoPage = () => {
   const [isFriend, setIsFriend] = useState(false);
   const [sentRequests, setSentRequests] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true); // <--- loading state!
   const { counts, refreshCounts } = useRequestCounts();
   const navigate = useNavigate();
 
-  const { user } = useAuth(); // <--- Use context
+  const { user } = useAuth();
   const currentUserId = user?._id;
 
   useEffect(() => {
-    if (!currentUserId || !friendId) return; // Defensive check
+    if (!currentUserId || !friendId) return;
 
     const fetchFriendData = async () => {
+      setLoading(true);
       try {
         const res = await axios.get(
           `${process.env.REACT_APP_BACKEND_URL}/api/users/${friendId}`
@@ -44,6 +46,7 @@ const FriendInfoPage = () => {
       } catch (err) {
         console.error("Failed to fetch friend data", err);
       }
+      setLoading(false);
     };
 
     fetchFriendData();
@@ -107,7 +110,14 @@ const FriendInfoPage = () => {
 
         {friendId !== currentUserId && (
           <>
-            {isFriend ? (
+            {loading ? (
+              <button
+                className="mt-4 bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed"
+                disabled
+              >
+                Loading...
+              </button>
+            ) : isFriend ? (
               <button
                 className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
                 onClick={handleDelete}
