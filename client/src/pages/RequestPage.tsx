@@ -3,6 +3,7 @@ import axios from "axios";
 import { Check, X } from "lucide-react";
 import { useRequestCounts } from "../context/RequestContext"; // adjust path as needed
 import GoBack from "../components/GoBack";
+import { hashedEmail } from "../utils/functions";
 
 type Request = {
   _id: string;
@@ -112,7 +113,7 @@ const Requests = () => {
               <div>
                 <p className="font-medium md:text-2xl">{req.from.name}</p>
                 <p className="text-sm text-gray-600 md:text-2xl">
-                  {req.from.email}
+                  {hashedEmail(req.from.email)}
                 </p>
               </div>
               <div className="flex items-center space-x-2">

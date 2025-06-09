@@ -144,7 +144,7 @@ const GroupInfoPage = () => {
                 <div className="flex justify-between items-center">
                   <span className="md:text-2xl">{event.title}</span>
                   <span className="text-sm text-gray-500 md:text-lg">
-                    {new Date(event.date).toLocaleDateString()}
+                    {event.date.slice(0, 10)}
                   </span>
                 </div>
               </div>

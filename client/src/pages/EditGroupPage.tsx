@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useRequestCounts } from "../context/RequestContext";
 import { RefreshCcw } from "lucide-react";
 import GoBack from "../components/GoBack";
+import { hashedEmail } from "../utils/functions";
 
 type Friend = {
   _id: string;
@@ -48,7 +49,9 @@ const EditGroupPage = () => {
   useEffect(() => {
     const fetchGroup = async () => {
       try {
-        const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}`);
+        const res = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}`
+        );
         setGroup(res.data);
         setGroupName(res.data.title);
         setRandomIcon(res.data.icon);
@@ -77,7 +80,9 @@ const EditGroupPage = () => {
   useEffect(() => {
     const fetchPendingRequests = async () => {
       try {
-        const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}/pending-requests`);
+        const res = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}/pending-requests`
+        );
         setPendingRequests(res.data);
       } catch (err) {
         console.error("Failed to fetch pending requests", err);
@@ -108,9 +113,12 @@ const EditGroupPage = () => {
   const removeFriendFromGroup = async (friend: Friend) => {
     if (group?.createdBy._id !== currentUser._id) return;
     try {
-      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}/members/remove`, {
-        userId: friend._id,
-      });
+      await axios.put(
+        `${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}/members/remove`,
+        {
+          userId: friend._id,
+        }
+      );
       setSelectedFriends((prev) => prev.filter((f) => f._id !== friend._id));
     } catch (err) {
       console.error("Failed to remove member", err);
@@ -132,18 +140,24 @@ const EditGroupPage = () => {
     }
 
     try {
-      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}/edit`, {
-        title: groupName,
-        icon: randomIcon,
-        userId: currentUser._id,
-      });
+      await axios.put(
+        `${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}/edit`,
+        {
+          title: groupName,
+          icon: randomIcon,
+          userId: currentUser._id,
+        }
+      );
 
       // Send invitations to new invites
       for (const friend of newInvites) {
-        await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}/invite`, {
-          toUserId: friend._id,
-          fromUserId: currentUser._id,
-        });
+        await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}/invite`,
+          {
+            toUserId: friend._id,
+            fromUserId: currentUser._id,
+          }
+        );
         setSuccessMessages((prev) => [
           ...prev,
           `Request sent to ${friend.name}`,
@@ -171,7 +185,9 @@ const EditGroupPage = () => {
     if (!confirmed) return;
 
     try {
-      await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}`);
+      await axios.delete(
+        `${process.env.REACT_APP_BACKEND_URL}/api/groups/${groupId}`
+      );
       alert("Group deleted successfully");
       navigate("/groups");
     } catch (err) {
@@ -242,7 +258,9 @@ const EditGroupPage = () => {
                   />
                   <span className="md:text-2xl">{user.name}</span>
                 </div>
-                <span className="text-sm text-gray-500 md:text-xl">{user.email}</span>
+                <span className="text-sm text-gray-500 md:text-xl">
+                  {hashedEmail(user.email)}
+                </span>
               </li>
             ))}
           </ul>

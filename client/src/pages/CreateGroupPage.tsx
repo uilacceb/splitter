@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useRequestCounts } from "../context/RequestContext";
 import { RefreshCcw } from "lucide-react";
 import GoBack from "../components/GoBack";
+import { hashedEmail } from "../utils/functions";
 
 type Friend = {
   _id: string;
@@ -193,7 +194,7 @@ const CreateGroupPage = () => {
                     />
                     <span className="md:text-2xl">{user.name}</span>
                   </div>
-                  <span className="text-sm text-gray-500 md:text-2xl">{user.email}</span>
+                  <span className="text-sm text-gray-500 md:text-2xl">{hashedEmail(user.email)}</span>
                 </li>
               ))}
             </ul>

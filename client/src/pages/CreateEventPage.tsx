@@ -14,7 +14,7 @@ type Member = {
 const CreateEventPage = () => {
   const { groupId } = useParams<{ groupId: string }>();
   const [title, setTitle] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(new Date().toLocaleDateString('en-CA'));
   const [members, setMembers] = useState<Member[]>([]);
   const [selectedParticipants, setSelectedParticipants] = useState<string[]>(
     []
@@ -87,6 +87,7 @@ const CreateEventPage = () => {
           className="w-full border p-2 rounded md:text-2xl"
           value={date}
           onChange={(e) => setDate(e.target.value)}
+
         />
 
         <div className="pt-6 ">

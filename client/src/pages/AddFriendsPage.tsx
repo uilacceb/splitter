@@ -3,6 +3,7 @@ import axios from "axios";
 import { UserPlus, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useRequestCounts } from "../context/RequestContext";
+import { hashedEmail } from "../utils/functions";
 
 type User = {
   _id: string; // MongoDB usually uses _id
@@ -31,7 +32,9 @@ const AddFriendsPage = () => {
 
       setLoading(true);
       try {
-        const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/users/search?query=${query}`);
+        const res = await axios.get(
+          `${process.env.REACT_APP_BACKEND_URL}/api/users/search?query=${query}`
+        );
         if (res.data.length > 0) {
           setResults(res.data);
           setNotFound(false);
@@ -59,10 +62,13 @@ const AddFriendsPage = () => {
     setError("");
     try {
       const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/users/friends/request`, {
-        to: userId,
-        from: currentUser._id,
-      }); // you need this endpoint
+      await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/users/friends/request`,
+        {
+          to: userId,
+          from: currentUser._id,
+        }
+      ); // you need this endpoint
       setSentRequests((prev) => [...prev, userId]);
       refreshCounts();
     } catch (err: any) {
@@ -81,7 +87,9 @@ const AddFriendsPage = () => {
       >
         Requests ({counts.total})
       </p>
-      <label htmlFor="email" className="md:text-3xl">Enter the email</label>
+      <label htmlFor="email" className="md:text-3xl">
+        Enter the email
+      </label>
       <input
         id="email"
         className="border-2 border-gray-400 p-2 mt-1 md:text-2xl"
@@ -105,7 +113,7 @@ const AddFriendsPage = () => {
                 alt="user profile pic"
               />
               <div>
-                <strong>{user.name}</strong> — {user.email}
+                <strong>{user.name}</strong> — {hashedEmail(user.email)}
               </div>
 
               <div className="ml-auto cursor-pointer">

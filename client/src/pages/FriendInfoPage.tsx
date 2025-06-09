@@ -4,6 +4,7 @@ import axios from "axios";
 import GoBack from "../components/GoBack";
 import { useRequestCounts } from "../context/RequestContext";
 import { useAuth } from "../context/AuthContext"; // <--- Import AuthContext
+import { hashedEmail } from "../utils/functions";
 
 type Friend = {
   _id: string;
@@ -100,7 +101,7 @@ const FriendInfoPage = () => {
           className="w-24 h-24 rounded-full"
         />
         <h2 className="text-xl font-semibold md:text-3xl">{friend.name}</h2>
-        <p className="text-gray-600">{friend.email}</p>
+        <p className="text-gray-600">{hashedEmail(friend.email)}</p>
 
         {error && <p className="text-red-500 mt-2">{error}</p>}
 
