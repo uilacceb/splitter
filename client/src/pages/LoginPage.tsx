@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useRequestCounts } from "../context/RequestContext";
 import catPoint from "../assets/cat point.gif";
+import InAppBrowserWarning from "../components/InAppBrowserWarning";
+import { isInAppBrowser } from "../utils/IsInAppBrowser";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -29,8 +31,10 @@ const LoginPage = () => {
     navigate("/friends");
   };
 
+
   return (
     <div className="flex justify-center items-center h-screen bg-gradient-to-r from-[#2f6253]   via-[#83A99B]  to-[#c9f4e4]">
+      <InAppBrowserWarning />
       <img src={catPoint} alt="sticker" className="w-24" />
       <div>
         <GoogleLogin
