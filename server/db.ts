@@ -1,28 +1,11 @@
-// db.ts
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
-
-
-// Add this to allow global caching on Vercel/Node
-let cached: any = (global as any).mongoose;
-
-if (!cached) {
-  cached = (global as any).mongoose = { conn: null, promise: null };
-}
-
-async function dbConnect() {
-  if (cached.conn) {
-    return cached.conn;
+export const connectDB = async () => {
+  try {
+    await mongoose.connect(`${process.env.MONGO_URI}`);
+    console.log("Database is connected")
   }
-  if (!cached.promise) {
-    cached.promise = await mongoose.connect(`${process.env.MONGO_URI}`, {
-      bufferCommands: false,
-    }).then((mongoose) => {
-      return mongoose;
-    });
+  catch (e) {
+    console.log(e)
   }
-  cached.conn = await cached.promise;
-  return cached.conn;
 }
-
-export default dbConnect;
