@@ -8,7 +8,7 @@ const InAppBrowserWarning: React.FC = () => {
   if (!isInAppBrowser()) return null;
 
   return (
-    <div className=" border-l-4 bg-white border-[#83A99B] text-[#2F5A62] p-4 my-4 rounded-lg text-center max-w-md mx-auto">
+    <div className=" border-l-4 bg-white border-[#83A99B] text-[#2F5A62] p-4 my-4 rounded-lg text-center max-w-md mr-4">
       <strong>Google Login may not work in this browser.</strong>
       <br />
       Please tap the <b>three dots menu</b> or <b>share icon</b> and choose{" "}

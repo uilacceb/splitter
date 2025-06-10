@@ -33,8 +33,8 @@ const LoginPage = () => {
 
   return (
     <div className="flex justify-center items-center h-screen bg-gradient-to-r from-[#2f6253]   via-[#83A99B]  to-[#c9f4e4]">
-      \
-      <img src={catPoint} alt="sticker" className="w-24" />
+      
+      <img src={catPoint} alt="sticker" className="w-24 m-4" />
       <InAppBrowserWarning />
       <div>
         <GoogleLogin
