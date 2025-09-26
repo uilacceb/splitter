@@ -1,5 +1,5 @@
-// __tests__/calculateNetTransactions.test.ts
 import {
+  calculateMinimalSettlements,
   calculateNetTransactions,
   Transaction,
 } from "../utils/calculateNetTransactions";
@@ -50,7 +50,7 @@ describe("calculateNetTransactions", () => {
     ]);
   });
 
-  it("should handle multiple user pairs and offset appropriately 2", () => {
+  it("should handle multiple user pairs and offset appropriately (case 2)", () => {
     const input: Transaction[] = [
       { from: "R", to: "A", amount: 83.33 },
       { from: "S", to: "A", amount: 83.33 },
@@ -67,7 +67,8 @@ describe("calculateNetTransactions", () => {
       { from: "S", to: "A", amount: 98.6 },
     ]);
   });
-  it("should handle multiple user pairs and offset appropriately 3", () => {
+
+  it("should handle multiple user pairs and offset appropriately (case 3)", () => {
     const input: Transaction[] = [
       { from: "Z", to: "A", amount: 25 },
       { from: "J", to: "A", amount: 25 },
@@ -77,6 +78,7 @@ describe("calculateNetTransactions", () => {
     ];
 
     const result = calculateNetTransactions(input);
+
     expect(
       result.sort(
         (a, b) => a.from.localeCompare(b.from) || a.to.localeCompare(b.to)
@@ -89,5 +91,36 @@ describe("calculateNetTransactions", () => {
         { from: "R", to: "Z", amount: 50 },
       ].sort((a, b) => a.from.localeCompare(b.from) || a.to.localeCompare(b.to))
     );
+  });
+
+  it("should handle one payer vs. multiple payers using calculateMinimalSettlements", () => {
+    // Andy paid 60, Aileen paid 400.88, Zach paid 221
+    // Expected: Andy owes Aileen 167.29, Zach owes Aileen 6.29
+    const transactions: Transaction[] = [
+      { from: "Andy", to: "Group", amount: 60 },
+      { from: "Zach", to: "Group", amount: 221 },
+      { from: "Aileen", to: "Group", amount: 400.88 },
+    ];
+
+    const result = calculateMinimalSettlements(transactions);
+    const sorted = result.sort((a, b) => a.from.localeCompare(b.from));
+
+    expect(sorted).toEqual([
+      { from: "Andy", to: "Aileen", amount: 167.29 },
+      { from: "Zach", to: "Aileen", amount: 6.29 },
+    ]);
+  });
+  it("should handle one payer vs. multiple payers using calculateMinimalSettlements2", () => {
+    const transactions: Transaction[] = [
+      { from: "Andy", to: "Group", amount: 60 },
+      { from: "Zach", to: "Group", amount: 20 },
+      { from: "Aileen", to: "Group", amount: 40 },
+    ];
+
+    const result = calculateMinimalSettlements(transactions);
+
+    expect(result).toEqual([
+      { from: "Zach", to: "Andy", amount: 20 },
+    ]);
   });
 });
