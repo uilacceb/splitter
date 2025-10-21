@@ -17,192 +17,196 @@ import EditExpensePage from "./pages/EditExpensePage";
 import EditEventPage from "./pages/EditEventPage";
 import ExpenseInfoPage from "./pages/ExpenseInfoPage";
 import FriendInfoPage from "./pages/FriendInfoPage";
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route
-          path="/friends"
-          element={
-            <ProtectedRoute>
-              <>
-                <Header />
-                <FriendsPage />
-              </>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/add-friend"
-          element={
-            <ProtectedRoute>
-              <>
-                <Header />
-                <AddFriendsPage />
-              </>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/create-group"
-          element={
-            <ProtectedRoute>
-              <>
-                <Header />
-                <CreateGroupPage />
-              </>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/requests"
-          element={
-            <ProtectedRoute>
-              <>
-                <Header />
-                <Requests />
-              </>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/friends/:friendId"
-          element={
-            <ProtectedRoute>
-              <>
-                <Header />
-                <FriendInfoPage />
-              </>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/groups"
-          element={
-            <ProtectedRoute>
-              <>
-                <Header />
-                <GroupPage />
-              </>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/groups/:groupId"
-          element={
-            <ProtectedRoute>
-              <>
-                <Header />
-                <GroupInfoPage />
-              </>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/groups/:groupId/edit"
-          element={
-            <ProtectedRoute>
-              <>
-                <Header />
-                <EditGroupPage />
-              </>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/groups/:groupId/add-event"
-          element={
-            <ProtectedRoute>
-              <>
-                <Header />
-                <CreateEventPage />
-              </>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/groups/:groupId/events/:eventId/add-expense"
-          element={
-            <ProtectedRoute>
-              <>
-                <Header />
-                <AddExpensePage />
-              </>
-            </ProtectedRoute>
-          }
-        />
+    <>
+      <Router>
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route
+            path="/friends"
+            element={
+              <ProtectedRoute>
+                <>
+                  <Header />
+                  <FriendsPage />
+                </>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/add-friend"
+            element={
+              <ProtectedRoute>
+                <>
+                  <Header />
+                  <AddFriendsPage />
+                </>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/create-group"
+            element={
+              <ProtectedRoute>
+                <>
+                  <Header />
+                  <CreateGroupPage />
+                </>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/requests"
+            element={
+              <ProtectedRoute>
+                <>
+                  <Header />
+                  <Requests />
+                </>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/friends/:friendId"
+            element={
+              <ProtectedRoute>
+                <>
+                  <Header />
+                  <FriendInfoPage />
+                </>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/groups"
+            element={
+              <ProtectedRoute>
+                <>
+                  <Header />
+                  <GroupPage />
+                </>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/groups/:groupId"
+            element={
+              <ProtectedRoute>
+                <>
+                  <Header />
+                  <GroupInfoPage />
+                </>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/groups/:groupId/edit"
+            element={
+              <ProtectedRoute>
+                <>
+                  <Header />
+                  <EditGroupPage />
+                </>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/groups/:groupId/add-event"
+            element={
+              <ProtectedRoute>
+                <>
+                  <Header />
+                  <CreateEventPage />
+                </>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/groups/:groupId/events/:eventId/add-expense"
+            element={
+              <ProtectedRoute>
+                <>
+                  <Header />
+                  <AddExpensePage />
+                </>
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/groups/:groupId/events/:eventId"
-          element={
-            <ProtectedRoute>
-              <>
-                <Header />
-                <EventInfoPage />
-              </>
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/groups/:groupId/events/:eventId"
+            element={
+              <ProtectedRoute>
+                <>
+                  <Header />
+                  <EventInfoPage />
+                </>
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/groups/:groupId/events/:eventId/edit-expense/:expenseId"
-          element={
-            <ProtectedRoute>
-              <>
-                <Header />
-                <EditExpensePage />
-              </>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/groups/:groupId/events/:eventId/edit"
-          element={
-            <ProtectedRoute>
-              <>
-                <Header />
-                <EditEventPage />
-              </>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/groups/:groupId/events/:eventId/expenses/:expenseId"
-          element={
-            <ProtectedRoute>
-              <>
-                <Header />
-                <ExpenseInfoPage />
-              </>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/account"
-          element={
-            <ProtectedRoute>
-              <>
-                <Header />
-                <AccountPage />
-              </>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/create-event"
-          element={
-            <ProtectedRoute>
-              <>
-                <Header />
-                <CreateEventPage />
-              </>
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </Router>
+          <Route
+            path="/groups/:groupId/events/:eventId/edit-expense/:expenseId"
+            element={
+              <ProtectedRoute>
+                <>
+                  <Header />
+                  <EditExpensePage />
+                </>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/groups/:groupId/events/:eventId/edit"
+            element={
+              <ProtectedRoute>
+                <>
+                  <Header />
+                  <EditEventPage />
+                </>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/groups/:groupId/events/:eventId/expenses/:expenseId"
+            element={
+              <ProtectedRoute>
+                <>
+                  <Header />
+                  <ExpenseInfoPage />
+                </>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/account"
+            element={
+              <ProtectedRoute>
+                <>
+                  <Header />
+                  <AccountPage />
+                </>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/create-event"
+            element={
+              <ProtectedRoute>
+                <>
+                  <Header />
+                  <CreateEventPage />
+                </>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
+      <Analytics />
+    </>
   );
 }
 
